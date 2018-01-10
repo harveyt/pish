@@ -7,9 +7,10 @@
 # %%LICENSE%%
 #
 
-# --------------------------------------------------------------------------------
+# ================================================================================
 # Option processing
-short_opts="vV"
+#
+short_opts="vqV"
 
 function usage()
 {
@@ -17,7 +18,8 @@ function usage()
 
 Provision In SHell. Ensure a machine is provisioned according to some simple bash script rules.
 
--v, --verbose	Verbose output to stderr.
+-v, --verbose	Verbose output to stderr (default).
+-q, --quiet	No verbose output to stderr.
 -V, --version	Show version to stderr.
 " >&2
     exit 1
@@ -30,6 +32,9 @@ function process_opt()
     case "$opt" in
 	v|verbose)
 	    VERBOSE=true
+	    ;;
+	q|quiet)
+	    VERBOSE=false
 	    ;;
 	V|version)
 	    show_version
@@ -46,7 +51,191 @@ function show_version()
     exit 0
 }
 
-# --------------------------------------------------------------------------------
+# ================================================================================
+# Helpers
+
+function error()
+{
+    echo "Error: $SCRIPT_TAG: $*" >&2
+    exit 1
+}
+
+function verb()
+{
+    [[ "$VERBOSE" != "true" ]] && return
+    echo "$SCRIPT_TAG: $*" >&2
+}
+
+function verb_begin()
+{
+    [[ "$VERBOSE" != "true" ]] && return
+    echo -n "$SCRIPT_TAG: $*" >&2
+}
+
+function verb_end()
+{
+    [[ "$VERBOSE" != "true" ]] && return
+    echo "$*" >&2
+}
+
+function is_function()
+{
+    local name="$1"
+    local value="$(type -t $name)"
+    [[ "$value" == "function" ]]
+}
+
+function quote_args()
+{
+    printf "\"%s\" " "$@"
+}
+
+# ================================================================================
+# Converge functions
+
+function get_desc()
+{
+    local cmd="$1"
+    if ! is_function ${cmd}_DESC
+    then
+	verb "[$cmd] FAILURE (${cmd}_DESC function is missing)"
+	return 1
+    fi
+
+    eval ${cmd}_DESC
+    return 0
+}
+
+function converge_test()
+{
+    local cmd="$1"
+    local desc="$(get_desc $cmd)"
+
+    if [[ "$desc" == "" ]]
+    then
+	exit 1
+    fi
+    
+    verb_begin "[$cmd] Test $desc ... "
+    
+    if ! is_function ${cmd}_TEST
+    then
+	verb_end "FAILURE (${cmd}_TEST function is missing)"
+	exit 1
+    fi
+
+    if eval ${cmd}_TEST
+    then
+	verb_end "Ok"
+	return 0
+    fi
+
+    verb_end "Needs Update"
+    return 1
+}
+
+function converge_exec()
+{
+    local cmd="$1"
+    local desc="$(get_desc $cmd)"
+
+    verb_begin "[$cmd] --- Execute --- "
+    
+    if ! is_function ${cmd}_EXEC
+    then
+	verb_end "FAILURE (missing ${cmd}_EXEC)"
+	exit 1
+    fi
+
+    verb_end ""
+
+    local exec_prefix="$SCRIPT_NAME: [$cmd] "
+    
+    execute "$exec_prefix" eval ${cmd}_EXEC
+    local status=$?
+    if [[ $status -ne 0 ]]
+    then
+	verb "[$cmd] --- Execute - FAILURE (exit $status) ---"
+	exit 1
+    fi
+
+    verb "[$cmd] --- Execute - Success ---"
+}
+
+function converge_validate()
+{
+    local cmd="$1"
+    local desc="$(get_desc $cmd)"
+
+    verb_begin "[$cmd] Validate $desc ... "
+
+    local func=_VALIDATE
+    if ! is_function ${cmd}${func}
+    then
+	func=_TEST
+	if ! is_function ${cmd}${func}
+	then
+	   verb_end "FAILURE (${cmd}_VALIDATE and ${cmd}_TEST function are missing)"
+	   exit 1	   
+	fi
+    fi
+
+    if ! eval ${cmd}${func}
+    then
+	verb_end "FAILURE (${cmd}${func} returned non-zero)"
+	exit 1
+    fi
+
+    verb_end "Ok"
+}
+    
+function converge()
+{
+    local cmd="$1"
+
+    if ! converge_test $cmd
+    then
+	converge_exec $cmd
+	converge_validate $cmd
+    fi
+}
+
+function execute()
+{
+    local prefix="$1"
+    shift
+    (
+	"$@" 2>&1 | sed -e "s/^/$prefix/"
+	exit ${PIPESTATUS[0]}
+    )
+    local status=$?
+    return $status
+}
+
+# ================================================================================
+# Configuration
+#
+
+# Determine script name
+SCRIPT_NAME="$(basename "$0" .sh)"
+SCRIPT_FILE="$(basename "$0")"
+SCRIPT_DIR="$(cd "$(dirname "$0")"; pwd -P)"
+SCRIPT_PATH="$SCRIPT_DIR/$SCRIPT_FILE"
+
+# What to show as prefix in output.
+if [[ "$SCRIPT_NAME" == "pish" ]]; then
+    SCRIPT_TAG="pish"
+else
+    SCRIPT_TAG="pish $SCRIPT_NAME"
+fi
+
+# Verbose by default
+VERBOSE=${VERBOSE:-true}
+
+# List of converge targets to run.
+TARGETS="${TARGETS:-}"
+
+# ================================================================================
 # Main
 
 while getopts "${short_opts}-:" c
@@ -63,5 +252,18 @@ do
     esac
 done
 shift $((OPTIND - 1))
-# TODO: Run default converge steps
+if [[ $# -ne 0 ]]
+then
+    usage
+fi
+
+if [[ "$TARGETS" == "" ]]
+then
+    error "No TARGETS specified"
+fi
+
+for target in $TARGETS
+do
+    converge $target
+done    
 exit 0
