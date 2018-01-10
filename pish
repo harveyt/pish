@@ -6,4 +6,62 @@
 #
 # %%LICENSE%%
 #
+
+# --------------------------------------------------------------------------------
+# Option processing
+short_opts="vV"
+
+function usage()
+{
+    echo "usage: pish ...
+
+Provision In SHell. Ensure a machine is provisioned according to some simple bash script rules.
+
+-v, --verbose	Verbose output to stderr.
+-V, --version	Show version to stderr.
+" >&2
+    exit 1
+}
+
+function process_opt()
+{
+    local opt="$1"
+
+    case "$opt" in
+	v|verbose)
+	    VERBOSE=true
+	    ;;
+	V|version)
+	    show_version
+	    ;;
+	*)
+	    usage
+	    ;;
+    esac
+}
+
+function show_version()
+{
+    echo "pish %%VERSION%%" >&2
+    exit 0
+}
+
+# --------------------------------------------------------------------------------
+# Main
+
+while getopts "${short_opts}-:" c
+do
+    case "$c" in
+	-)
+	    long_opt="$OPTARG"
+	    OPTARG=""
+	    process_opt "$long_opt"
+	    ;;
+	*)
+	    process_opt "$c"
+	    ;;
+    esac
+done
+shift $((OPTIND - 1))
+# TODO: Run default converge steps
 exit 0
