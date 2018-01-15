@@ -27,6 +27,8 @@ fi
 # Verbose by default
 VERBOSE=${VERBOSE:-true}
 
+VERBOSE_PREFIX=${VERBOSE_PREFIX:-}
+
 # ================================================================================
 # Option processing
 #
@@ -83,13 +85,13 @@ function error()
 function verb()
 {
     [[ "$VERBOSE" != "true" ]] && return
-    echo "$SCRIPT_TAG: $*" >&2
+    echo "${VERBOSE_PREFIX}$*" >&2
 }
 
 function verb_begin()
 {
     [[ "$VERBOSE" != "true" ]] && return
-    echo -n "$SCRIPT_TAG: $*" >&2
+    echo -n "${VERBOSE_PREFIX}$*" >&2
 }
 
 function verb_end()
@@ -116,20 +118,22 @@ function quote_args()
 function get_desc()
 {
     local cmd="$1"
+    shift
     if ! is_function ${cmd}_DESC
     then
 	verb "[$cmd] FAILURE (${cmd}_DESC function is missing)"
 	return 1
     fi
 
-    eval ${cmd}_DESC
+    eval ${cmd}_DESC $(quote_args "$@")
     return 0
 }
 
 function converge_test()
 {
     local cmd="$1"
-    local desc="$(get_desc $cmd)"
+    shift
+    local desc="$(get_desc $cmd "$@")"
 
     if [[ "$desc" == "" ]]
     then
@@ -144,7 +148,7 @@ function converge_test()
 	exit 1
     fi
 
-    if eval ${cmd}_TEST
+    if eval ${cmd}_TEST $(quote_args "$@")
     then
 	verb_end "Ok"
 	return 0
@@ -157,7 +161,8 @@ function converge_test()
 function converge_exec()
 {
     local cmd="$1"
-    local desc="$(get_desc $cmd)"
+    shift
+    local desc="$(get_desc $cmd "$@")"
 
     verb_begin "[$cmd] --- Execute --- "
     
@@ -171,7 +176,7 @@ function converge_exec()
 
     local exec_prefix="$SCRIPT_NAME: [$cmd] "
     
-    execute "$exec_prefix" eval ${cmd}_EXEC
+    execute "$exec_prefix" eval ${cmd}_EXEC $(quote_args "$@")
     local status=$?
     if [[ $status -ne 0 ]]
     then
@@ -185,7 +190,8 @@ function converge_exec()
 function converge_validate()
 {
     local cmd="$1"
-    local desc="$(get_desc $cmd)"
+    shift
+    local desc="$(get_desc $cmd "$@")"
 
     verb_begin "[$cmd] Validate $desc ... "
 
@@ -200,7 +206,7 @@ function converge_validate()
 	fi
     fi
 
-    if ! eval ${cmd}${func}
+    if ! eval ${cmd}${func} $(quote_args "$@")
     then
 	verb_end "FAILURE (${cmd}${func} returned non-zero)"
 	exit 1
@@ -211,12 +217,13 @@ function converge_validate()
     
 function converge()
 {
-    local rule="$1"
-
-    if ! converge_test $rule
+    local cmd="$1"
+    shift
+    
+    if ! converge_test $cmd "$@"
     then
-	converge_exec $rule
-	converge_validate $rule
+	converge_exec $cmd "$@"
+	converge_validate $cmd "$@"
     fi
 }
 
