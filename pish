@@ -259,7 +259,7 @@ function run_rules()
 }
 
 # ================================================================================
-# Basic Recipes
+# Basic rules
 
 function file_exists_DESC()
 {
