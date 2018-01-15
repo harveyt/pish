@@ -8,6 +8,26 @@
 #
 
 # ================================================================================
+# Configuration
+#
+
+# Determine script name
+SCRIPT_NAME="$(basename "$0" .sh)"
+SCRIPT_FILE="$(basename "$0")"
+SCRIPT_DIR="$(cd "$(dirname "$0")"; pwd -P)"
+SCRIPT_PATH="$SCRIPT_DIR/$SCRIPT_FILE"
+
+# What to show as prefix in output.
+if [[ "$SCRIPT_NAME" == "pish" ]]; then
+    SCRIPT_TAG="pish"
+else
+    SCRIPT_TAG="pish $SCRIPT_NAME"
+fi
+
+# Verbose by default
+VERBOSE=${VERBOSE:-true}
+
+# ================================================================================
 # Option processing
 #
 short_opts="vqV"
@@ -191,12 +211,12 @@ function converge_validate()
     
 function converge()
 {
-    local cmd="$1"
+    local rule="$1"
 
-    if ! converge_test $cmd
+    if ! converge_test $rule
     then
-	converge_exec $cmd
-	converge_validate $cmd
+	converge_exec $rule
+	converge_validate $rule
     fi
 }
 
@@ -213,57 +233,54 @@ function execute()
 }
 
 # ================================================================================
-# Configuration
+# Rule handling
 #
+declare -a RULES
 
-# Determine script name
-SCRIPT_NAME="$(basename "$0" .sh)"
-SCRIPT_FILE="$(basename "$0")"
-SCRIPT_DIR="$(cd "$(dirname "$0")"; pwd -P)"
-SCRIPT_PATH="$SCRIPT_DIR/$SCRIPT_FILE"
+function add_rule()
+{
+    local args="converge $(quote_args "$@")"
+    RULES+=("$args")
+}
 
-# What to show as prefix in output.
-if [[ "$SCRIPT_NAME" == "pish" ]]; then
-    SCRIPT_TAG="pish"
-else
-    SCRIPT_TAG="pish $SCRIPT_NAME"
-fi
-
-# Verbose by default
-VERBOSE=${VERBOSE:-true}
-
-# List of converge targets to run.
-TARGETS="${TARGETS:-}"
+function run_rules()
+{
+    for rule in "${RULES[@]}"
+    do
+	eval $rule
+    done
+}
 
 # ================================================================================
 # Main
+#
 
-while getopts "${short_opts}-:" c
-do
-    case "$c" in
-	-)
-	    long_opt="$OPTARG"
-	    OPTARG=""
-	    process_opt "$long_opt"
-	    ;;
-	*)
-	    process_opt "$c"
-	    ;;
-    esac
-done
-shift $((OPTIND - 1))
-if [[ $# -ne 0 ]]
+function main()
+{
+    while getopts "${short_opts}-:" c "$@"
+    do
+	case "$c" in
+	    -)
+		long_opt="$OPTARG"
+		OPTARG=""
+		process_opt "$long_opt"
+		;;
+	    *)
+		process_opt "$c"
+		;;
+	esac
+    done
+    shift $((OPTIND - 1))
+    if [[ $# -ne 0 ]]
+    then
+	usage
+    fi
+
+    run_rules
+}
+
+if [[ "$SCRIPT_NAME" == "pish" ]]
 then
-    usage
+    main "$@"
+    exit 0
 fi
-
-if [[ "$TARGETS" == "" ]]
-then
-    error "No TARGETS specified"
-fi
-
-for target in $TARGETS
-do
-    converge $target
-done    
-exit 0
