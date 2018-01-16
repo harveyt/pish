@@ -32,7 +32,7 @@ VERBOSE_PREFIX=${VERBOSE_PREFIX:-}
 # ================================================================================
 # Option processing
 #
-short_opts="vqV"
+short_opts="vqVt:"
 
 function usage()
 {
@@ -43,6 +43,8 @@ Provision In SHell. Ensure a machine is provisioned according to some simple bas
 -v, --verbose	Verbose output to stderr (default).
 -q, --quiet	No verbose output to stderr.
 -V, --version	Show version to stderr.
+
+-t requirement	Run this given requirement (run defaults if none supplied).
 " >&2
     exit 1
 }
@@ -60,6 +62,9 @@ function process_opt()
 	    ;;
 	V|version)
 	    show_version
+	    ;;
+	t)
+	    requirement $OPTARG
 	    ;;
 	*)
 	    usage
@@ -330,6 +335,11 @@ function converge()
     if [[ $# -ne 0 ]]
     then
 	usage
+    fi
+
+    if [[ ${#REQUIREMENTS[@]} == 0 ]]
+    then
+	converge_defaults
     fi
 
     requirement_run_all
