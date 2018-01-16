@@ -1,16 +1,18 @@
 # -*- Makefile -*-
 
 BINDIR	= /usr/local/bin
+LIBDIR	= /usr/local/lib/pish
+LIBS	= $(wildcard lib/pish/*)
+FILES	= bin/pish $(LIBS)
 
 .DEFAULT: install
 
-install: $(BINDIR)/pish
-
-$(BINDIR)/pish: pish
-	./install_files $(BINDIR) pish
+install: uninstall
+	./install_files $(BINDIR) $(LIBDIR) $(FILES)
 
 uninstall:
 	rm -f $(BINDIR)/pish
+	rm -rf $(LIBDIR)
 
 release:
 	$(MAKE) release-create

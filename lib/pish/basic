@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# Provision In SHell.
+#
+# Version: %%VERSION%%
+#
+# %%LICENSE%%
+#
+
+# ================================================================================
+# Basic requirements
+#
+function file_exists_DESC()
+{
+    echo "file \"$1\" exists"
+}
+
+function file_exists_TEST()
+{
+    [[ -f "$1" ]]
+}
+
+function directory_exists_DESC()
+{
+    echo "directory \"$1\" exists"
+}
+
+function directory_exists_TEST()
+{
+    [[ -d "$1" ]]
+}
+
+function can_execute_DESC()
+{
+    echo "can execute \"$1\""
+}
+
+function can_execute_TEST()
+{
+   type -p "$1" >/dev/null
+}

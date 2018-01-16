@@ -2,12 +2,18 @@
 VERSION=$(git describe --tags 2>/dev/null || echo unknown)
 
 BINDIR="$1"
-shift 1
+LIBDIR="$2"
+shift 2
 
 for file in "$@"
 do
-    src="$file"
-    dest="$BINDIR/$file"
+    if [[ "$file" == */pish ]]; then
+	src="$file"
+	dest="$BINDIR/$(basename $file)"
+    else
+	src="$file"
+	dest="$LIBDIR/$(basename $file)"
+    fi
     dir=$(dirname "$dest")
     if [[ ! -d "$dir" ]]; then
 	mkdir -p "$dir"
