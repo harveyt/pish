@@ -170,33 +170,30 @@ function converge_test()
     return 1
 }
 
-function converge_exec()
+function converge_update()
 {
     local cmd="$1"
     shift
     local desc="$(converge_get_desc $cmd "$@")"
 
-    verb_begin "[$cmd] --- Execute --- "
-    
-    if ! is_function ${cmd}_EXEC
+    verb_begin "[$cmd] Resolve $desc ... "
+
+    if is_function ${cmd}_SHELL
     then
-	verb_end "FAILURE (missing ${cmd}_EXEC)"
+	verb_end "Updating in sub-shell"
+	converge_update_shell $cmd "$@"
+    elif is_function ${cmd}_LOCAL
+    then
+	if converge_update_local $cmd "$@"
+	then
+	    verb_end "Updated"
+	else
+	    verb_end "FAILURE"
+	fi
+    else
+	verb_end "FAILURE (${cmd}_SHELL and ${cmd}_LOCAL functions are missing)"
 	exit 1
     fi
-
-    verb_end ""
-
-    local exec_prefix="$SCRIPT_NAME: [$cmd] "
-    
-    converge_shell "$exec_prefix" eval ${cmd}_EXEC $(quote_args "$@")
-    local status=$?
-    if [[ $status -ne 0 ]]
-    then
-	verb "[$cmd] --- Execute - FAILURE (exit $status) ---"
-	exit 1
-    fi
-
-    verb "[$cmd] --- Execute - Success ---"
 }
 
 function converge_validate()
@@ -213,7 +210,7 @@ function converge_validate()
 	func=_TEST
 	if ! is_function ${cmd}${func}
 	then
-	   verb_end "FAILURE (${cmd}_VALIDATE and ${cmd}_TEST function are missing)"
+	   verb_end "FAILURE (${cmd}_VALIDATE and ${cmd}_TEST functions are missing)"
 	   exit 1	   
 	fi
     fi
@@ -227,14 +224,35 @@ function converge_validate()
     verb_end "Ok"
 }
     
-function converge_shell()
+function converge_update_shell()
 {
-    local prefix="$1"
+    local cmd="$1"
+    shift
+
+    verb "[$cmd] --- Shell --- "
+
+    local shell_prefix="$SCRIPT_NAME: [$cmd] "
     shift
     (
-	"$@" 2>&1 | sed -e "s/^/$prefix/"
+	eval ${cmd}_SHELL $(quote_args "$@") | sed -e "s/^/$shell_prefix/"
 	exit ${PIPESTATUS[0]}
     )
+    local status=$?
+
+    if [[ $status -ne 0 ]]
+    then
+	verb "[$cmd] --- Shell - FAILURE (exit $status) ---"
+	exit 1
+    fi
+
+    verb "[$cmd] --- Shell - Success ---"
+}
+
+function converge_update_local()
+{
+    local cmd="$1"
+    shift
+    eval ${cmd}_LOCAL $(quote_args "$@")
     local status=$?
     return $status
 }
@@ -246,7 +264,7 @@ function converge_requirement()
     
     if ! converge_test $cmd "$@"
     then
-	converge_exec $cmd "$@"
+	converge_update $cmd "$@"
 	converge_validate $cmd "$@"
     fi
 }

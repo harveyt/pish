@@ -33,3 +33,73 @@ function 1pass_logged_in_TEST()
 {
     "$_1PASS" --login-valid
 }
+
+# --------------------------------------------------------------------------------
+
+function 1pass_get_user_PREQ()
+{
+    requirement 1pass_logged_in
+}
+
+function 1pass_get_user_DESC()
+{
+    local user="$1"
+    local id="$2"
+    echo "has user for \"$user\" in $id"
+}
+
+function 1pass_get_user_TEST()
+{
+    local user="$1"
+    local id="$2"
+    local USER="$(eval echo \$$id)"
+    
+    [[ "$USER" != "" ]]
+}
+
+function 1pass_get_user_LOCAL()
+{
+    local user="$1"
+    local id="$2"
+    local USER="$(eval echo \$$id)"
+
+    if [[ "$USER" == "" ]]
+    then
+	eval $id=\""$(1pass -u "$user")"\"
+    fi
+}
+
+# --------------------------------------------------------------------------------
+
+function 1pass_get_password_PREQ()
+{
+    requirement 1pass_logged_in
+}
+
+function 1pass_get_password_DESC()
+{
+    local user="$1"
+    local id="$2"
+    echo "has password for \"$user\" in $id"
+}
+
+function 1pass_get_password_TEST()
+{
+    local user="$1"
+    local id="$2"
+    local PASSWORD="$(eval echo \$$id)"
+    
+    [[ "$PASSWORD" != "" ]]
+}
+
+function 1pass_get_password_LOCAL()
+{
+    local user="$1"
+    local id="$2"
+    local PASSWORD="$(eval echo \$$id)"
+
+    if [[ "$PASSWORD" == "" ]]
+    then
+	eval $id=\""$(1pass -p "$user")"\"
+    fi
+}
