@@ -231,7 +231,7 @@ function converge_update_shell()
 
     verb "[$cmd] --- Shell --- "
 
-    local shell_prefix="$SCRIPT_NAME: [$cmd] "
+    local shell_prefix="${VERBOSE_PREFIX}[$cmd] "
     shift
     (
 	eval ${cmd}_SHELL $(quote_args "$@") | sed -e "s/^/$shell_prefix/"
