@@ -1,0 +1,35 @@
+#!/bin/bash
+#
+# Provision In SHell.
+#
+# Version: %%VERSION%%
+#
+# %%LICENSE%%
+#
+
+# ================================================================================
+# 1Password Configuration
+#
+_1PASS=${_1PASS:-1pass}
+_1PASS_OP=${_1PASS_OP:-op}
+_1PASS_JQ=${_1PASS_JQ:-jq}
+
+# ================================================================================
+# 1Password Requirements
+#
+function 1pass_logged_in_PREQ()
+{
+    requirement can_execute "$_1PASS"
+    requirement can_execute "$_1PASS_OP"
+    requirement can_execute "$_1PASS_JQ"
+}
+
+function 1pass_logged_in_DESC()
+{
+    echo "logged into 1Password"
+}
+
+function 1pass_logged_in_TEST()
+{
+    "$_1PASS" --login-valid
+}
