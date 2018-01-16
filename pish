@@ -38,7 +38,7 @@ function usage()
 {
     echo "usage: pish ...
 
-Provision In SHell. Ensure a machine is provisioned according to some simple bash script rules.
+Provision In SHell. Ensure a machine is provisioned according to some simple bash script requirements.
 
 -v, --verbose	Verbose output to stderr (default).
 -q, --quiet	No verbose output to stderr.
@@ -115,7 +115,7 @@ function quote_args()
 # ================================================================================
 # Converge functions
 
-function get_desc()
+function converge_get_desc()
 {
     local cmd="$1"
     shift
@@ -133,7 +133,7 @@ function converge_test()
 {
     local cmd="$1"
     shift
-    local desc="$(get_desc $cmd "$@")"
+    local desc="$(converge_get_desc $cmd "$@")"
 
     if [[ "$desc" == "" ]]
     then
@@ -162,7 +162,7 @@ function converge_exec()
 {
     local cmd="$1"
     shift
-    local desc="$(get_desc $cmd "$@")"
+    local desc="$(converge_get_desc $cmd "$@")"
 
     verb_begin "[$cmd] --- Execute --- "
     
@@ -176,7 +176,7 @@ function converge_exec()
 
     local exec_prefix="$SCRIPT_NAME: [$cmd] "
     
-    execute "$exec_prefix" eval ${cmd}_EXEC $(quote_args "$@")
+    converge_shell "$exec_prefix" eval ${cmd}_EXEC $(quote_args "$@")
     local status=$?
     if [[ $status -ne 0 ]]
     then
@@ -191,7 +191,7 @@ function converge_validate()
 {
     local cmd="$1"
     shift
-    local desc="$(get_desc $cmd "$@")"
+    local desc="$(converge_get_desc $cmd "$@")"
 
     verb_begin "[$cmd] Validate $desc ... "
 
@@ -215,19 +215,7 @@ function converge_validate()
     verb_end "Ok"
 }
     
-function converge()
-{
-    local cmd="$1"
-    shift
-    
-    if ! converge_test $cmd "$@"
-    then
-	converge_exec $cmd "$@"
-	converge_validate $cmd "$@"
-    fi
-}
-
-function execute()
+function converge_shell()
 {
     local prefix="$1"
     shift
@@ -239,27 +227,39 @@ function execute()
     return $status
 }
 
-# ================================================================================
-# Rule handling
-#
-declare -a RULES
-
-function add_rule()
+function converge_requirement()
 {
-    local args="converge $(quote_args "$@")"
-    RULES+=("$args")
+    local cmd="$1"
+    shift
+    
+    if ! converge_test $cmd "$@"
+    then
+	converge_exec $cmd "$@"
+	converge_validate $cmd "$@"
+    fi
 }
 
-function run_rules()
+# ================================================================================
+# Requirement handling
+#
+declare -a REQUIREMENTS
+
+function requirement()
 {
-    for rule in "${RULES[@]}"
+    local args="converge_requirement $(quote_args "$@")"
+    REQUIREMENTS+=("$args")
+}
+
+function requirement_run_all()
+{
+    for requirement in "${REQUIREMENTS[@]}"
     do
-	eval $rule
+	eval $requirement
     done
 }
 
 # ================================================================================
-# Basic rules
+# Basic requirements
 
 function file_exists_DESC()
 {
@@ -295,7 +295,7 @@ function can_execute_TEST()
 # Main
 #
 
-function main()
+function converge()
 {
     while getopts "${short_opts}-:" c "$@"
     do
@@ -316,11 +316,11 @@ function main()
 	usage
     fi
 
-    run_rules
+    requirement_run_all
 }
 
 if [[ "$SCRIPT_NAME" == "pish" ]]
 then
-    main "$@"
+    converge "$@"
     exit 0
 fi
