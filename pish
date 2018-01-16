@@ -129,6 +129,18 @@ function converge_get_desc()
     return 0
 }
 
+function converge_prerequisites()
+{
+    local cmd="$1"
+    shift
+    if ! is_function ${cmd}_PREQ
+    then
+	return
+    fi
+
+    eval ${cmd}_PREQ $(quote_args "$@")
+}
+
 function converge_test()
 {
     local cmd="$1"
@@ -246,15 +258,34 @@ declare -a REQUIREMENTS
 
 function requirement()
 {
-    local args="converge_requirement $(quote_args "$@")"
+    if requirement_exists "$@"
+    then
+	return
+    fi
+
+    converge_prerequisites "$@"
+    
+    local args="$(quote_args "$@")"
     REQUIREMENTS+=("$args")
 }
 
+function requirement_exists()
+{
+    local args="$(quote_args "$@")"
+    for requirement in "${REQUIREMENTS[@]}"
+    do
+	if [[ "$requirement" == "$args" ]]; then
+	    return 0
+	fi
+    done
+    return 1
+}
+    
 function requirement_run_all()
 {
     for requirement in "${REQUIREMENTS[@]}"
     do
-	eval $requirement
+	eval converge_requirement $requirement
     done
 }
 
