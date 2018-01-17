@@ -1,0 +1,80 @@
+#!/bin/bash
+#
+# Provision In SHell.
+#
+# Version: %%VERSION%%
+#
+# %%LICENSE%%
+#
+
+# ================================================================================
+# Sudo Configuration
+#
+SUDO_ROOT_PASSWORD=${SUDO_ROOT_PASSWORD:-}
+SUDO_ROOT_ITEM=${SUDO_ROOT_ITEM:-}
+
+# ================================================================================
+# 1Password Requirements
+#
+function sudo_root_get_password_PREQ()
+{
+    requirement 1pass_logged_in
+}
+
+function sudo_root_get_password_DESC()
+{
+    echo "SUDO_ROOT_PASSWORD is set, using \"$SUDO_ROOT_ITEM\" 1Password item"
+}
+
+function sudo_root_get_password_TEST()
+{
+    [[ "$SUDO_ROOT_PASSWORD" != "" ]]
+}
+
+function sudo_root_get_password_LOCAL()
+{
+    if [[ "$SUDO_ROOT_ITEM" == "" ]]
+    then
+	error "SUDO_ROOT_ITEM should be set"
+    fi
+    SUDO_ROOT_PASSWORD="$(1pass -p "$SUDO_ROOT_ITEM")"
+}
+
+# --------------------------------------------------------------------------------
+
+function sudo_cache_root_password_PREQ()
+{
+    requirement sudo_root_get_password
+}
+
+function sudo_cache_root_password_DESC()
+{
+    echo "root password is cached for sudo while provisioning"
+}
+
+SUDO_CACHE_PID=""
+
+function sudo_cache_root_password_TEST()
+{
+    [[ "$SUDO_CACHE_PID" != "" ]]
+}
+
+function sudo_cache_root_password_LOCAL()
+{
+    echo "Cache root password"
+    echo "$SUDO_ROOT_PASSWORD" | sudo -S true >/dev/null 2>&1
+
+    echo "Start sudo cache process"
+    local this_pid=$$
+    (
+	while true
+	do
+	    sleep 60
+	    if ! kill -0 $this_pid 2>/dev/null
+	    then
+		exit 0
+	    fi
+	done
+    ) &
+    SUDO_CACHE_PID=$!
+}
