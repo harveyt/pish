@@ -61,12 +61,8 @@ function 1pass_get_user_LOCAL()
 {
     local user="$1"
     local id="$2"
-    local USER="$(eval echo \$$id)"
 
-    if [[ "$USER" == "" ]]
-    then
-	eval $id=\""$(1pass -u "$user")"\"
-    fi
+    eval $id=\""$(1pass -u "$user")"\"
 }
 
 # --------------------------------------------------------------------------------
@@ -96,10 +92,28 @@ function 1pass_get_password_LOCAL()
 {
     local user="$1"
     local id="$2"
-    local PASSWORD="$(eval echo \$$id)"
 
-    if [[ "$PASSWORD" == "" ]]
-    then
-	eval $id=\""$(1pass -p "$user")"\"
-    fi
+    eval $id=\""$(1pass -p "$user")"\"
+}
+
+# --------------------------------------------------------------------------------
+
+function 1pass_get_master_password_PREQ()
+{
+    requirement 1pass_logged_in
+}
+
+function 1pass_get_master_password_DESC()
+{
+    echo "has master password in _1PASS_MASTER_PASSWORD"
+}
+
+function 1pass_get_master_password_TEST()
+{
+    [[ "$_1PASS_MASTER_PASSWORD" != "" ]]
+}
+
+function 1pass_get_master_password_LOCAL()
+{
+    _1PASS_MASTER_PASSWORD="$(1pass --master-password)"
 }
