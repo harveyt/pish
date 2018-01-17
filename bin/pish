@@ -233,13 +233,14 @@ function converge_update_shell()
 {
     local cmd="$1"
     shift
+    local args="$(quote_args "$@")"
 
     verb "[$cmd] --- Shell --- "
 
     local shell_prefix="${VERBOSE_PREFIX}[$cmd] "
     shift
     (
-	eval ${cmd}_SHELL $(quote_args "$@") | sed -e "s/^/$shell_prefix/"
+	eval ${cmd}_SHELL $args | sed -e "s/^/$shell_prefix/"
 	exit ${PIPESTATUS[0]}
     )
     local status=$?
