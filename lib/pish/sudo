@@ -61,10 +61,8 @@ function sudo_cache_root_password_TEST()
 
 function sudo_cache_root_password_LOCAL()
 {
-    echo "Cache root password"
     echo "$SUDO_ROOT_PASSWORD" | sudo -S true >/dev/null 2>&1
 
-    echo "Start sudo cache refresh background process"
     local this_pid=$$
     (
 	while true
@@ -77,5 +75,6 @@ function sudo_cache_root_password_LOCAL()
 	    fi
 	done
     ) >/dev/null 2>&1 &
+
     SUDO_CACHE_PID=$!
 }
