@@ -99,6 +99,12 @@ function verb_begin()
     echo -n "${VERBOSE_PREFIX}$*" >&2
 }
 
+function verb_cont()
+{
+    [[ "$VERBOSE" != "true" ]] && return
+    echo -n "$*" >&2
+}
+
 function verb_end()
 {
     [[ "$VERBOSE" != "true" ]] && return
