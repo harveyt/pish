@@ -26,7 +26,7 @@ function system_scutil_TEST()
 {
     local pref="$1"
     local value="$2"
-    local current="$(sudo -S scutil --get "$pref")"
+    local current="$(sudo scutil --get "$pref")"
 
     [[ "$current" == "$value" ]]
 }
@@ -36,6 +36,40 @@ function system_scutil_SHELL()
     local pref="$1"
     local value="$2"
 
-    sudo -S scutil --set "$pref" "$value"
+    sudo scutil --set "$pref" "$value"
 }
 
+# ================================================================================
+# Requirements for defaults
+#
+function system_defaults_string_PREQ()
+{
+    requirement sudo_cache_root_password
+}
+
+function system_defaults_string_DESC()
+{
+    local file="$1"
+    local pref="$2"
+    local value="$3"
+    echo "defaults file \"$file\" with \"$pref\" has string value \"$value\""
+}
+
+function system_defaults_string_TEST()
+{
+    local file="$1"
+    local pref="$2"
+    local value="$3"
+    local current="$(sudo defaults read "$file" "$pref")"
+
+    [[ "$current" == "$value" ]]
+}
+
+function system_defaults_string_SHELL()
+{
+    local file="$1"
+    local pref="$2"
+    local value="$3"
+
+    sudo defaults write "$file" "$pref" -string "$value"
+}
