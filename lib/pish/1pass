@@ -62,7 +62,7 @@ function 1pass_get_user_LOCAL()
     local user="$1"
     local id="$2"
 
-    eval $id=\""$(1pass -u "$user")"\"
+    eval $id=\""$("$_1PASS" -u "$user")"\"
 }
 
 # --------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ function 1pass_get_password_LOCAL()
     local user="$1"
     local id="$2"
 
-    eval $id=\""$(1pass -p "$user")"\"
+    eval $id=\""$("$_1PASS" -p "$user")"\"
 }
 
 # --------------------------------------------------------------------------------
@@ -115,5 +115,5 @@ function 1pass_get_master_password_TEST()
 
 function 1pass_get_master_password_LOCAL()
 {
-    _1PASS_MASTER_PASSWORD="$(1pass --master-password)"
+    _1PASS_MASTER_PASSWORD="$("$_1PASS" --master-password)"
 }

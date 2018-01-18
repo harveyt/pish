@@ -37,7 +37,7 @@ function sudo_root_get_password_LOCAL()
     then
 	error "SUDO_ROOT_ITEM should be set"
     fi
-    SUDO_ROOT_PASSWORD="$(1pass -p "$SUDO_ROOT_ITEM")"
+    SUDO_ROOT_PASSWORD="$("$_1PASS" -p "$SUDO_ROOT_ITEM")"
 }
 
 # --------------------------------------------------------------------------------
@@ -77,4 +77,9 @@ function sudo_cache_root_password_LOCAL()
     ) >/dev/null 2>&1 &
 
     SUDO_CACHE_PID=$!
+}
+
+function sudo_cache_root_password_VALIDATE()
+{
+    sudo true
 }

@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# Provision In SHell.
+#
+# Version: %%VERSION%%
+#
+# %%LICENSE%%
+#
+
+# ================================================================================
+# Requirements for scutil
+#
+function system_scutil_PREQ()
+{
+    requirement sudo_cache_root_password
+}
+
+function system_scutil_DESC()
+{
+    local pref="$1"
+    local value="$2"
+    echo "scutil preference \"$pref\" has value \"$value\""
+}
+
+function system_scutil_TEST()
+{
+    local pref="$1"
+    local value="$2"
+    local current="$(sudo -S scutil --get "$pref")"
+
+    [[ "$current" == "$value" ]]
+}
+
+function system_scutil_SHELL()
+{
+    local pref="$1"
+    local value="$2"
+
+    sudo -S scutil --set "$pref" "$value"
+}
+
