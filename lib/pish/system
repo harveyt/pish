@@ -223,9 +223,11 @@ function get_keyboard_modifier_value()
     defaults -currentHost read -g $key 2>/dev/null
 }
 
+# https://web.archive.org/web/20141112224103/http://hintsforums.macworld.com/showthread.php?t=114785
+# https://www.raizlabs.com/dev/2015/02/how-to-script-os-x-keyboard-shortcuts/
+# https://apple.stackexchange.com/questions/201816/how-do-i-change-mission-control-shortcuts-from-the-command-line
 function get_shortcut_id_by_name()
 {
-    # https://web.archive.org/web/20141112224103/http://hintsforums.macworld.com/showthread.php?t=114785
     local name="$1"
     case $name in
 	"Mission Control")
@@ -239,6 +241,18 @@ function get_shortcut_id_by_name()
 	    ;;
 	"Move right a space")
 	    echo 81
+	    ;;
+	"Switch to Desktop 1")
+	    echo 118
+	    ;;
+	"Switch to Desktop 2")
+	    echo 119
+	    ;;
+	"Switch to Desktop 3")
+	    echo 120
+	    ;;
+	"Switch to Desktop 4")
+	    echo 121
 	    ;;
 	*)
 	    error "Unknown shortcut name"
@@ -360,7 +374,7 @@ function system_keyboard_shortcut_enabled_SHELL()
     local param3="$4"    
     local id=$(get_shortcut_id_by_name "$name")
 
-    $PLIST_BUDDY -c "delete :AppleSymbolicHotKeys:$id" $HOT_KEYS
+    $PLIST_BUDDY -c "delete :AppleSymbolicHotKeys:$id" $HOT_KEYS 2>/dev/null
     $PLIST_BUDDY -c "add :AppleSymbolicHotKeys:$id dict" $HOT_KEYS
     $PLIST_BUDDY -c "add :AppleSymbolicHotKeys:$id:enabled bool YES" $HOT_KEYS
     $PLIST_BUDDY -c "add :AppleSymbolicHotKeys:$id:value dict" $HOT_KEYS
