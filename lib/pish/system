@@ -156,3 +156,27 @@ function system_setup_SHELL()
 
     sudo systemsetup -set$key "$value"
 }
+
+# ================================================================================
+# Requirements for Dock
+#
+
+function restart_dock_DESC()
+{
+    echo "dock process is restarted"
+}
+
+function restart_dock_TEST()
+{
+    false
+}
+
+function restart_dock_LOCAL()
+{
+    killall Dock
+}
+
+function restart_dock_VALIDATE()
+{
+    true
+}
