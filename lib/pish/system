@@ -26,7 +26,7 @@ function system_scutil_TEST()
 {
     local pref="$1"
     local value="$2"
-    local current="$(sudo scutil --get "$pref")"
+    local current="$(sudo scutil --get "$pref" 2>/dev/null)"
 
     [[ "$current" == "$value" ]]
 }
@@ -42,34 +42,117 @@ function system_scutil_SHELL()
 # ================================================================================
 # Requirements for defaults
 #
-function system_defaults_string_PREQ()
+function system_sudo_defaults_PREQ()
 {
     requirement sudo_cache_root_password
 }
 
-function system_defaults_string_DESC()
+function system_sudo_defaults_DESC()
 {
-    local file="$1"
-    local pref="$2"
-    local value="$3"
-    echo "defaults file \"$file\" with \"$pref\" has string value \"$value\""
+    local domain="$1"
+    local key="$2"
+    local type="$3"
+    local value="$4"
+    echo "sudo defaults domain \"$domain\" with \"$key\" is \"$value\""
 }
 
-function system_defaults_string_TEST()
+function system_sudo_defaults_TEST()
 {
-    local file="$1"
-    local pref="$2"
-    local value="$3"
-    local current="$(sudo defaults read "$file" "$pref")"
+    local domain="$1"
+    local key="$2"
+    local type="$3"
+    local value="$4"
+    local current="$(sudo defaults read "$domain" "$key" 2>/dev/null)"
 
     [[ "$current" == "$value" ]]
 }
 
-function system_defaults_string_SHELL()
+function system_sudo_defaults_SHELL()
 {
-    local file="$1"
-    local pref="$2"
-    local value="$3"
+    local domain="$1"
+    local key="$2"
+    local type="$3"
+    local value="$4"
 
-    sudo defaults write "$file" "$pref" -string "$value"
+    sudo defaults write "$domain" "$key" "$type" "$value"
+}
+
+# --------------------------------------------------------------------------------
+function system_defaults_DESC()
+{
+    local domain="$1"
+    local key="$2"
+    local type="$3"
+    local value="$4"
+    echo "defaults domain \"$domain\" with \"$key\" is \"$value\""
+}
+
+function system_defaults_TEST()
+{
+    local domain="$1"
+    local key="$2"
+    local type="$3"
+    local value="$4"
+    local current="$(defaults read "$domain" "$key" 2>/dev/null)"
+
+    [[ "$current" == "$value" ]]
+}
+
+function system_defaults_SHELL()
+{
+    local domain="$1"
+    local key="$2"
+    local type="$3"
+    local value="$4"
+
+    defaults write "$domain" "$key" "$type" "$value"
+}
+
+# ================================================================================
+# Requirements for systemsetup
+#
+
+function system_setup_PREQ()
+{
+    requirement sudo_cache_root_password
+}
+
+function system_setup_DESC()
+{
+    local key="$1"
+    local value="$2"
+    echo "system setup with \"$key\" has \"$value\""
+}
+
+function system_setup_TEST()
+{
+    local key="$1"
+    local value="$2"
+    local current="$(sudo systemsetup -get$key 2>/dev/null)"
+    local prefix=""
+
+    case $key in
+	timezone)
+	    prefix="Time Zone: "
+	    ;;
+	usingnetworktime)
+	    prefix="Network Time: "
+	    ;;
+	networktimeserver)
+	    prefix="Network Time Server: "
+	    ;;
+	*)
+	    prefix=""
+	    ;;
+    esac
+    
+    [[ "$current" == "$prefix$value" ]]
+}
+
+function system_setup_SHELL()
+{
+    local key="$1"
+    local value="$2"
+
+    sudo systemsetup -set$key "$value"
 }
