@@ -313,8 +313,18 @@ function requirement_exists()
     
 function requirement_run_all()
 {
-    for requirement in "${REQUIREMENTS[@]}"
+    while true
     do
+	if [[ "${#REQUIREMENTS[@]}" -eq 0 ]]
+	then
+	    break
+	fi
+
+	# Pop one
+	local requirement="${REQUIREMENTS[0]}"
+	REQUIREMENTS=("${REQUIREMENTS[@]:1}")
+
+	# Run it
 	eval converge_requirement $requirement
     done
 }
