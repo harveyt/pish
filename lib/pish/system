@@ -180,3 +180,83 @@ function restart_dock_VALIDATE()
 {
     true
 }
+
+# ================================================================================
+# Helpers for Keyboard
+#
+
+function get_keyboard_vendor_product()
+{
+    eval $(ioreg -n "$1" -r | sed -E -n \
+				  -e 's/^.*"(idVendor|VendorID)" = /vendor_id=/p' \
+				  -e 's/^.*"(idProduct|ProductID)" = /product_id=/p')
+}
+
+function get_keyboard_defaults_key()
+{
+    local vendor_id
+    local product_id
+    get_keyboard_vendor_product IOHIDKeyboard
+    if [[ "$vendor_id" == "" || "$product_id" == "" ]]
+    then
+	vm_kb="$(ioreg | sed -n -e 's/^.*\(VMware Virtual USB Keyboard@[^ ]*\).*$/\1/p' | head -1)"
+	if [[ "$vm_kb" == "" ]]
+	then
+	    error "Cannot find keyboard"
+	fi
+	get_keyboard_vendor_product "$vm_kb"
+
+	if [[ "$vendor_id" == "" || "$product_id" == "" ]]
+	then
+	    error "Cannot find vendor and product for VM keyboard"
+	fi
+    fi
+    echo "com.apple.keyboard.modifiermapping.$vendor_id-$product_id-0"
+}
+
+function get_keyboard_modifier_value()
+{
+    local key=$(get_keyboard_defaults_key)
+    if [[ "$key" == "" ]]; then
+     	exit 1
+    fi
+    defaults -currentHost read -g $key 2>/dev/null
+}
+
+# ================================================================================
+# Requirements for Keyboard
+#
+
+function system_keyboard_modifiers_DESC()
+{
+    echo "keyboard modifiers are correct"
+}
+
+function system_keyboard_modifiers_TEST()
+{
+    local value="$(get_keyboard_modifier_value)"
+
+    # TODO: Hard coded to change Caps Lock to Control
+    local expected="(
+        {
+        HIDKeyboardModifierMappingDst = 30064771300;
+        HIDKeyboardModifierMappingSrc = 30064771129;
+    }
+)"
+    [[ "$value" == "$expected" ]]
+}
+
+function system_keyboard_modifiers_SHELL()
+{
+    local key=$(get_keyboard_defaults_key)
+    if [[ "$key" == "" ]]; then
+     	error "Cannot get keyboard modifier information"
+    fi
+    # TODO: Hard coded to change Caps Lock to Control    
+    defaults -currentHost write -g $key -array '<dict>
+     <key>HIDKeyboardModifierMappingDst</key>
+     <integer>30064771300</integer>
+     <key>HIDKeyboardModifierMappingSrc</key>
+     <integer>30064771129</integer>
+</dict>'
+}
