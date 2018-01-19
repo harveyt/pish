@@ -142,8 +142,10 @@ function converge_get_desc()
 
 function converge_prerequisites()
 {
-    local cmd="$1"
-    shift
+    local cmd
+    local set_requirement=""
+    eval $(converge_process_arguments "$@")
+
     if ! is_function ${cmd}_PREQ
     then
 	return
@@ -271,14 +273,49 @@ function converge_update_local()
 
 function converge_requirement()
 {
-    local cmd="$1"
-    shift
+    local cmd
+    local set_requirement=""
+    eval $(converge_process_arguments "$@")
     
     if ! converge_test $cmd "$@"
     then
 	converge_update $cmd "$@"
 	converge_validate $cmd "$@"
+
+	if [[ "$set_requirement" != "" ]]
+	then
+	    echo "Adding \"$set_requirement\""
+	    requirement "$set_requirement"
+	fi
     fi
+}
+
+function converge_process_arguments()
+{
+    local c
+    local set_requirement=""
+    
+    while getopts s: c "$@"
+    do
+	case $c in
+	    s)
+		set_requirement="$OPTARG"
+		;;
+	    *)
+		error "Unknown option \"-$c\" for requirement"
+		;;
+	esac
+    done
+    shift $((OPTIND - 1))
+    if [[ $# -eq 0 ]]
+    then
+	error "Missing command for requirement"
+    fi
+
+    local cmd="$1"
+    shift
+    
+    echo "set_requirement=\"$set_requirement\"; cmd=\"$cmd\"; set -- $(quote_args "$@")"
 }
 
 # ================================================================================
