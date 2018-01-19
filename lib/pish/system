@@ -223,6 +223,31 @@ function get_keyboard_modifier_value()
     defaults -currentHost read -g $key 2>/dev/null
 }
 
+function get_shortcut_id_by_name()
+{
+    # https://web.archive.org/web/20141112224103/http://hintsforums.macworld.com/showthread.php?t=114785
+    local name="$1"
+    case $name in
+	"Mission Control")
+	    echo 32
+	    ;;
+	"Application windows")
+	    echo 33
+	    ;;
+	"Move left a space")
+	    echo 79
+	    ;;
+	"Move right a space")
+	    echo 81
+	    ;;
+	*)
+	    error "Unknown shortcut name"
+    esac
+}	
+
+PLIST_BUDDY=/usr/libexec/plistbuddy
+HOT_KEYS=$HOME/Library/Preferences/com.apple.symbolichotkeys.plist
+
 # ================================================================================
 # Requirements for Keyboard
 #
@@ -259,4 +284,89 @@ function system_keyboard_modifiers_SHELL()
      <key>HIDKeyboardModifierMappingSrc</key>
      <integer>30064771129</integer>
 </dict>'
+}
+
+# --------------------------------------------------------------------------------
+
+function system_keyboard_shortcut_disabled_DESC()
+{
+    local name="$1"
+    echo "keyboard shortcut \"$name\" is disabled"
+}
+
+function system_keyboard_shortcut_disabled_TEST()
+{
+    local name="$1"
+    local id=$(get_shortcut_id_by_name "$name")
+
+    if [[ "$id" == "" ]]
+    then
+	error "Cannot find shortcut id for \"$name\""
+    fi
+
+    local value="$($PLIST_BUDDY -c "print :AppleSymbolicHotKeys:$id:enabled" $HOT_KEYS 2>/dev/null)"
+    [[ "$value" == "false" ]]
+}
+
+function system_keyboard_shortcut_disabled_SHELL()
+{
+    local name="$1"
+    local id=$(get_shortcut_id_by_name "$name")
+
+    $PLIST_BUDDY -c "set :AppleSymbolicHotKeys:$id:enabled false" $HOT_KEYS
+}
+
+# --------------------------------------------------------------------------------
+
+function system_keyboard_shortcut_enabled_DESC()
+{
+    local name="$1"
+    echo "keyboard shortcut \"$name\" is enabled"
+}
+
+function system_keyboard_shortcut_enabled_TEST()
+{
+    local name="$1"
+    local param1="$2"
+    local param2="$3"
+    local param3="$4"    
+    local id=$(get_shortcut_id_by_name "$name")
+
+    if [[ "$id" == "" ]]
+    then
+	error "Cannot find shortcut id for \"$name\""
+    fi
+
+    local value="$($PLIST_BUDDY -c "print :AppleSymbolicHotKeys:$id" $HOT_KEYS 2>/dev/null)"
+    local expected="Dict {
+    enabled = true
+    value = Dict {
+        type = standard
+        parameters = Array {
+            $param1
+            $param2
+            $param3
+        }
+    }
+}"
+    [[ "$value" == "$expected" ]]
+}
+
+function system_keyboard_shortcut_enabled_SHELL()
+{
+    local name="$1"
+    local param1="$2"
+    local param2="$3"
+    local param3="$4"    
+    local id=$(get_shortcut_id_by_name "$name")
+
+    $PLIST_BUDDY -c "delete :AppleSymbolicHotKeys:$id" $HOT_KEYS
+    $PLIST_BUDDY -c "add :AppleSymbolicHotKeys:$id dict" $HOT_KEYS
+    $PLIST_BUDDY -c "add :AppleSymbolicHotKeys:$id:enabled bool YES" $HOT_KEYS
+    $PLIST_BUDDY -c "add :AppleSymbolicHotKeys:$id:value dict" $HOT_KEYS
+    $PLIST_BUDDY -c "add :AppleSymbolicHotKeys:$id:value:type string standard" $HOT_KEYS
+    $PLIST_BUDDY -c "add :AppleSymbolicHotKeys:$id:value:parameters array" $HOT_KEYS
+    $PLIST_BUDDY -c "add :AppleSymbolicHotKeys:$id:value:parameters:0 integer $param1" $HOT_KEYS
+    $PLIST_BUDDY -c "add :AppleSymbolicHotKeys:$id:value:parameters:1 integer $param2" $HOT_KEYS
+    $PLIST_BUDDY -c "add :AppleSymbolicHotKeys:$id:value:parameters:2 integer $param3" $HOT_KEYS
 }
