@@ -182,6 +182,30 @@ function restart_dock_VALIDATE()
 }
 
 # ================================================================================
+# Requirements for SystemUIServer
+#
+
+function restart_system_ui_server_DESC()
+{
+    echo "SystemUIServer process is restarted"
+}
+
+function restart_system_ui_server_TEST()
+{
+    false
+}
+
+function restart_system_ui_server_LOCAL()
+{
+    killall SystemUIServer
+}
+
+function restart_system_ui_server_VALIDATE()
+{
+    true
+}
+
+# ================================================================================
 # Helpers for Keyboard
 #
 
