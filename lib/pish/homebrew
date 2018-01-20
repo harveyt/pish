@@ -29,3 +29,28 @@ function homebrew_install_SHELL()
 {
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" </dev/null
 }
+
+# --------------------------------------------------------------------------------
+
+function brew_install_PREQ()
+{
+    requirement homebrew_install
+}
+
+function brew_install_DESC()
+{
+    local name="$1"
+    echo "brew install $name"
+}
+
+function brew_install_TEST()
+{
+    local name="$1"    
+    brew ls --versions "$name" >/dev/null
+}
+
+function brew_install_SHELL()
+{
+    local name="$1"
+    brew install "$name"
+}
