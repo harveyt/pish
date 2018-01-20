@@ -7,6 +7,10 @@
 # %%LICENSE%%
 #
 
+PLIST_BUDDY=/usr/libexec/plistbuddy
+HOT_KEYS=$HOME/Library/Preferences/com.apple.symbolichotkeys.plist
+SYSTEM_UI=$HOME/Library/Preferences/com.apple.systemuiserver.plist
+
 # ================================================================================
 # Requirements for scutil
 #
@@ -205,6 +209,29 @@ function restart_system_ui_server_VALIDATE()
     true
 }
 
+# --------------------------------------------------------------------------------
+function system_ui_menu_show_DESC()
+{
+    local name="$1"
+    echo "Show \"$name\" in system UI menu"
+}
+
+function system_ui_menu_show_TEST()
+{
+    local name="$1"
+    local value="$($PLIST_BUDDY -c "print :menuExtras" $SYSTEM_UI 2>/dev/null | grep "$name")"
+
+    [[ "$value" != "" ]]
+}
+
+function system_ui_menu_show_SHELL()
+{
+    local name="$1"
+    local path="/System/Library/CoreServices/Menu Extras/$name.menu"
+    
+    $PLIST_BUDDY -c "add :menuExtras:0 string \"$path\"" $SYSTEM_UI
+}
+
 # ================================================================================
 # Helpers for Keyboard
 #
@@ -282,9 +309,6 @@ function get_shortcut_id_by_name()
 	    error "Unknown shortcut name"
     esac
 }	
-
-PLIST_BUDDY=/usr/libexec/plistbuddy
-HOT_KEYS=$HOME/Library/Preferences/com.apple.symbolichotkeys.plist
 
 # ================================================================================
 # Requirements for Keyboard
@@ -407,4 +431,32 @@ function system_keyboard_shortcut_enabled_SHELL()
     $PLIST_BUDDY -c "add :AppleSymbolicHotKeys:$id:value:parameters:0 integer $param1" $HOT_KEYS
     $PLIST_BUDDY -c "add :AppleSymbolicHotKeys:$id:value:parameters:1 integer $param2" $HOT_KEYS
     $PLIST_BUDDY -c "add :AppleSymbolicHotKeys:$id:value:parameters:2 integer $param3" $HOT_KEYS
+}
+
+# ================================================================================
+# Requirements for user account
+#
+
+function user_account_picture_DESC()
+{
+    local path="$1"
+    echo "user account picture is \"$path\""
+}
+
+function user_account_picture_TEST()
+{
+    local path="$1"
+    local value="$(dscl . -read $HOME Picture)"
+    local expected="Picture:
+ $path"
+    [[ "$value" == "$expected" ]]
+}
+
+function user_account_picture_SHELL()
+{
+    local path="$1"
+
+    sudo dscl . -delete $HOME jpegphoto
+    sudo dscl . -delete $HOME Picture
+    sudo dscl . -create $HOME Picture "$path"
 }
