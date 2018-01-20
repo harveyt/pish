@@ -1,0 +1,31 @@
+#!/bin/bash
+#
+# Provision In SHell.
+#
+# Version: %%VERSION%%
+#
+# %%LICENSE%%
+#
+
+# ================================================================================
+# Requirements for homebrew
+#
+function homebrew_install_PREQ()
+{
+    requirement sudo_cache_root_password
+}
+
+function homebrew_install_DESC()
+{
+    echo "install homebrew"
+}
+
+function homebrew_install_TEST()
+{
+   type -p brew >/dev/null
+}
+
+function homebrew_install_SHELL()
+{
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" </dev/null
+}
