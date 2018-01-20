@@ -460,3 +460,28 @@ function user_account_picture_SHELL()
     sudo dscl . -delete $HOME Picture
     sudo dscl . -create $HOME Picture "$path"
 }
+
+# ================================================================================
+# Requirements for Finder
+#
+
+function restart_finder_DESC()
+{
+    echo "finder process is restarted"
+}
+
+function restart_finder_TEST()
+{
+    false
+}
+
+function restart_finder_LOCAL()
+{
+    killall Finder
+}
+
+function restart_finder_VALIDATE()
+{
+    true
+}
+
