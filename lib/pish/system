@@ -375,7 +375,14 @@ function system_keyboard_shortcut_disabled_SHELL()
     local name="$1"
     local id=$(get_shortcut_id_by_name "$name")
 
-    $PLIST_BUDDY -c "set :AppleSymbolicHotKeys:$id:enabled false" $HOT_KEYS
+    local exists="$($PLIST_BUDDY -c "print :AppleSymbolicHotKeys:$id" $HOT_KEYS 2>/dev/null)"
+    if [[ "$exists" != "" ]]
+    then
+	$PLIST_BUDDY -c "set :AppleSymbolicHotKeys:$id:enabled false" $HOT_KEYS
+    else
+	$PLIST_BUDDY -c "add :AppleSymbolicHotKeys:$id dict" $HOT_KEYS
+	$PLIST_BUDDY -c "add :AppleSymbolicHotKeys:$id:enabled bool NO" $HOT_KEYS
+    fi
 }
 
 # --------------------------------------------------------------------------------
