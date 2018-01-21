@@ -124,15 +124,13 @@ function brew_service_running_PREQ()
 function brew_service_running_DESC()
 {
     local name="$1"
-    local version="$2"    
-    echo "brew services $name@$version is running"
+    echo "brew services $name is running"
 }
 
 function brew_service_running_TEST()
 {
     local name="$1"
-    local version="$2"
-    local status="$(brew services list | awk '$1 == "'"$name@$version"'" { print $2 }')"
+    local status="$(brew services list | awk '$1 == "'"$name"'" { print $2 }')"
     
     [[ "$status" == "started" ]]
 }
@@ -140,7 +138,6 @@ function brew_service_running_TEST()
 function brew_service_running_SHELL()
 {
     local name="$1"
-    local version="$2"
     
-    brew services start "$name@$version"
+    brew services start "$name"
 }
