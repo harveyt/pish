@@ -54,3 +54,28 @@ function brew_install_SHELL()
     local name="$1"
     brew install "$name"
 }
+
+# --------------------------------------------------------------------------------
+
+function brew_cask_install_PREQ()
+{
+    requirement homebrew_install
+}
+
+function brew_cask_install_DESC()
+{
+    local name="$1"
+    echo "brew cask install $name"
+}
+
+function brew_cask_install_TEST()
+{
+    local name="$1"    
+    brew cask list "$name" >/dev/null 2>&1
+}
+
+function brew_cask_install_SHELL()
+{
+    local name="$1"
+    brew cask install "$name"
+}
