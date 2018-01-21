@@ -57,6 +57,40 @@ function brew_install_SHELL()
 
 # --------------------------------------------------------------------------------
 
+function brew_install_version_PREQ()
+{
+    local name="$1"
+    local version="$2"
+    requirement homebrew_install
+    requirement brew_install "$name@$version"
+}
+
+function brew_install_version_DESC()
+{
+    local name="$1"
+    local version="$2"
+    echo "brew installed $name linked as version $version"
+}
+
+function brew_install_version_TEST()
+{
+    local name="$1"
+    local version="$2"
+    local linked="$(brew info --json=v1 "$name@$version" | jq -r '.[0].linked_keg')"
+
+    [[ "$linked" == $version* ]]
+}
+
+function brew_install_version_SHELL()
+{
+    local name="$1"
+    local version="$2"
+
+    brew link --force "$name@$version"
+}
+
+# --------------------------------------------------------------------------------
+
 function brew_cask_install_PREQ()
 {
     requirement homebrew_install
@@ -79,3 +113,7 @@ function brew_cask_install_SHELL()
     local name="$1"
     brew cask install "$name"
 }
+
+# --------------------------------------------------------------------------------
+
+    
