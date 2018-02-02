@@ -39,3 +39,19 @@ function can_execute_TEST()
 {
    type -p "$1" >/dev/null
 }
+
+# --------------------------------------------------------------------------------
+function make_directory_DESC()
+{
+    echo "directory \"$1\" is created"
+}
+
+function make_directory_TEST()
+{
+    [[ -d "$1" ]]
+}
+
+function make_directory_SHELL()
+{
+    mkdir -p "$1"
+}
