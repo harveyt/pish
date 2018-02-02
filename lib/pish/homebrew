@@ -141,3 +141,28 @@ function brew_service_running_SHELL()
     
     brew services start "$name"
 }
+
+# --------------------------------------------------------------------------------
+
+function brew_tap_PREQ()
+{
+    requirement homebrew_install
+}
+
+function brew_tap_DESC()
+{
+    local name="$1"
+    echo "brew tap $name"
+}
+
+function brew_tap_TEST()
+{
+    local name="$1"
+    brew tap 2>/dev/null | grep -q -x "$name" 2>/dev/null
+}
+
+function brew_tap_SHELL()
+{
+    local name="$1"
+    brew tap "$name"
+}
