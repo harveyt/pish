@@ -1,0 +1,56 @@
+#!/bin/bash
+#
+# Provision In SHell.
+#
+# Version: %%VERSION%%
+#
+# %%LICENSE%%
+#
+
+# ================================================================================
+# Python Requirements
+#
+function python_has_pip_PREQ()
+{
+    requirement sudo_cache_root_password
+}
+
+function python_has_pip_DESC()
+{
+    echo "python pip command is installed"
+}
+
+function python_has_pip_TEST()
+{
+    type -p pip >/dev/null
+}
+
+function python_has_pip_SHELL()
+{
+    sudo easy_install pip
+}
+
+# --------------------------------------------------------------------------------
+function python_pip_install_PREQ()
+{
+    requirement python_has_pip
+}
+
+function python_pip_install_DESC()
+{
+    local package="$1"    
+    echo "python package \"$package\" is installed"
+}
+
+function python_pip_install_TEST()
+{
+    local package="$1"
+    local value="$(pip list --format=columns | awk '$1 == "'"$package"'" { print $0; }')"
+    [[ "$value" != "" ]]
+}
+
+function python_pip_install_SHELL()
+{
+    local package="$1"    
+    pip install --user "$package"
+}
