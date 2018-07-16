@@ -151,14 +151,14 @@ function brew_tap_PREQ()
 
 function brew_tap_DESC()
 {
-    local name="$1"
+    local name="$1" tap="$2"
     echo "brew tap $name"
 }
 
 function brew_tap_TEST()
 {
-    local name="$1"
-    brew tap 2>/dev/null | grep -q -x "$name" 2>/dev/null
+    local name="$1" tap="$2"
+    brew tap 2>/dev/null | grep -q -x "$tap" 2>/dev/null
 }
 
 function brew_tap_SHELL()
