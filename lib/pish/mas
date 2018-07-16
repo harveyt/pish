@@ -1,0 +1,36 @@
+#!/bin/bash
+#
+# Provision In SHell.
+#
+# Version: %%VERSION%%
+#
+# %%LICENSE%%
+#
+
+# ================================================================================
+# Requirements for mas
+#
+function mas_install_PREQ()
+{
+    requirement brew_install mas
+}
+
+function mas_install_DESC()
+{
+    local key="$1" name="$2"
+    echo "install $name from AppStore"
+}
+
+function mas_install_TEST()
+{
+    local key="$1" name="$2"
+    local installed="$(mas list 2>/dev/null | sed -n -e "/^$key /p")"
+    [[ "$installed" != "" ]]
+}
+
+function mas_install_SHELL()
+{
+    # TODO: Should check signed in, supply sign in automatically if required.
+    local key="$1" name="$2"
+    mas install "$key"
+}
