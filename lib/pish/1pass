@@ -17,6 +17,9 @@ _1PASS_JQ=${_1PASS_JQ:-jq}
 # ================================================================================
 # 1Password Requirements
 #
+# This will only pass if user is logged in.
+#
+
 function 1pass_logged_in_PREQ()
 {
     requirement can_execute "$_1PASS"
@@ -32,6 +35,33 @@ function 1pass_logged_in_DESC()
 function 1pass_logged_in_TEST()
 {
     "$_1PASS" --login-valid
+}
+
+# --------------------------------------------------------------------------------
+# This will login user if required
+#
+
+function 1pass_login_PREQ()
+{
+    requirement can_execute "$_1PASS"
+    requirement can_execute "$_1PASS_OP"
+    requirement can_execute "$_1PASS_JQ"
+}
+
+function 1pass_login_DESC()
+{
+    echo "login into 1Password"
+}
+
+function 1pass_login_TEST()
+{
+    "$_1PASS" --login-valid
+}
+
+function 1pass_login_LOCAL()
+{
+    export _1PASS_INPUT=terminal
+    $(eval "$_1PASS" --login)
 }
 
 # --------------------------------------------------------------------------------
