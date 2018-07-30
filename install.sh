@@ -7,10 +7,17 @@
 #
 
 PISH_URL=https://github.com/harveyt/pish/archive/master.zip
+
+# Preference order for finding binaries and scripts:
+# - /usr/local
+# - $HOME/Projecs/
+# - $HOME/Downloads/
 PISH_LOCAL_BIN=/usr/local/bin
 PISH_LOCAL_LIB=/usr/local/lib/pish
 PISH_PROJECT_ROOT=$HOME/Projects/pish
 PISH_PROJECT_EXEC=$PISH_PROJECT_ROOT/lib/pish/exec
+PISH_DOWNLOAD_ROOT=$HOME/Downloads/pish
+PISH_DOWNLOAD_EXEC=$PISH_DOWNLOAD_ROOT/lib/pish/exec
 
 # ================================================================================
 # Install
@@ -22,13 +29,17 @@ function ensure_1pass_binary()
     local binpath
     
     if [[ -x $PISH_LOCAL_BIN/$name ]]; then
-	echo "Using $name from $PISH_LOCAL_BIN ..."
-	binpath=$PISH_LOCAL_BIN/$name
+	binpath=$PISH_LOCAL_BIN
+    elif [[ -x $PISH_PROJECT_EXEC/$name ]]; then
+	binpath=$PISH_PROJECT_EXEC
+    elif [[ -x $PISH_DOWNLOAD_EXEC/$name ]]; then
+	binpath=$PISH_DOWNLOAD_EXEC
     else
-	echo "Using $name from $PISH_PROJECT_EXEC ..."
-	binpath=$PISH_PROJECT_EXEC/$name
+	echo "Cannot find $name in $PISH_LOCAL_BIN, $PISH_PROJECT_EXEC or $PISH_DOWNLOAD_EXEC" >&2
+	exit 1
     fi
-    eval export $env=$binpath
+    echo "Using $name from $binpath ..."
+    eval export $env=$binpath/$name
 }
 
 function ensure_pish_installed()
@@ -36,18 +47,21 @@ function ensure_pish_installed()
     if [[ -d $PISH_LOCAL_LIB ]]; then
 	echo "Using PISH_ROOT=$PISH_LOCAL_LIB ..."
 	PISH_ROOT=$PISH_LOCAL_LIB
-    else
-	if [[ ! -d $PISH_PROJECT_ROOT ]]; then
-	    echo "Installing pish from $PISH_URL to $PISH_PROJECT_ROOT ..."
-	    local dl=/tmp/pish.zip
-	    curl -L -J -o $dl $PISH_URL
-	    mkdir -p $PISH_PROJECT_ROOT
-	    unzip -d $PISH_PROJECT_ROOT -o -x $dl
-	    mv $PISH_PROJECT_ROOT/pish-master/* $PISH_PROJECT_ROOT
-	    rmdir $PISH_PROJECT_ROOT/pish-master
-	fi
+    elif [[ -d $PISH_PROJECT_ROOT ]]; then
 	echo "Using PISH_ROOT=$PISH_PROJECT_ROOT ..."
 	PISH_ROOT=$PISH_PROJECT_ROOT
+    else
+	if [[ ! -d $PISH_DOWNLOAD_ROOT ]]; then
+	    echo "Installing pish from $PISH_URL to $PISH_DOWNLOAD_ROOT ..."
+	    local dl=/tmp/pish.zip
+	    curl -L -J -o $dl $PISH_URL
+	    mkdir -p $PISH_DOWNLOAD_ROOT
+	    unzip -d $PISH_DOWNLOAD_ROOT -o -x $dl
+	    mv $PISH_DOWNLOAD_ROOT/pish-master/* $PISH_DOWNLOAD_ROOT
+	    rmdir $PISH_DOWNLOAD_ROOT/pish-master
+	fi
+	echo "Using PISH_ROOT=$PISH_DOWNLOAD_ROOT ..."
+	PISH_ROOT=$PISH_DOWNLOAD_ROOT
     fi
 
     ensure_1pass_binary 1pass _1PASS
