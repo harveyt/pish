@@ -4,7 +4,7 @@ BINDIR	= /usr/local/bin
 LIBDIR	= /usr/local/lib/pish
 EXECDIR	= /usr/local/lib/pish/exec
 
-LIBS	= $(filter-out lib/pish/exec/*, $(wildcard lib/pish/*))
+LIBS	= $(filter-out lib/pish/exec, $(wildcard lib/pish/*))
 EXECS	= $(wildcard lib/pish/exec/*)
 FILES	= bin/pish $(LIBS)
 
