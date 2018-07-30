@@ -19,6 +19,14 @@ PISH_PROJECT_EXEC=$PISH_PROJECT_ROOT/lib/pish/exec
 PISH_DOWNLOAD_ROOT=$HOME/Downloads/pish
 PISH_DOWNLOAD_EXEC=$PISH_DOWNLOAD_ROOT/lib/pish/exec
 
+# Private box configuration
+BOX_1PASS_TAG=Bitbucket
+BOX_URL=https://bitbucket.org/harveyt/box-macosx-harveyt/get/master.zip
+BOX_DL=$HOME/Downloads/box.zip
+BOX_ROOT=$HOME/Downloads/box
+
+CURL=curl -L -J
+
 # ================================================================================
 # Install
 #
@@ -54,7 +62,7 @@ function ensure_pish_installed()
 	if [[ ! -d $PISH_DOWNLOAD_ROOT ]]; then
 	    echo "Installing pish from $PISH_URL to $PISH_DOWNLOAD_ROOT ..."
 	    local dl=/tmp/pish.zip
-	    curl -L -J -o $dl $PISH_URL
+	    $CURL -o $dl $PISH_URL
 	    mkdir -p $PISH_DOWNLOAD_ROOT
 	    unzip -d $PISH_DOWNLOAD_ROOT -o -x $dl
 	    mv $PISH_DOWNLOAD_ROOT/pish-master/* $PISH_DOWNLOAD_ROOT
@@ -82,8 +90,36 @@ PISH=$PISH_ROOT/bin/pish
 . $PISH_LIB/1pass
 
 # ================================================================================
-# Login
+# Box Install
 #
+
+function box_installed_PREQ()
+{
+    requirement 1pass_logged_in
+}
+
+function box_installed_DESC()
+{
+    echo "box installed"
+}
+
+function box_installed_TEST()
+{
+    [[ -d "$BOX_ROOT" ]]
+}
+
+function box_installed_EXEC()
+{
+    local bitbucket_user=$(1pass -u $BITBUCKET_1PASS_TAG)
+    local bitbucket_password=$(1pass -p $BITBUCKET_1PASS_TAG)
+    $CURL --user "$bitbucket_user:$bitbucket_password" -o $BOX_DL $BOX_URL
+    mkdir -p $BOX_DIR
+    unzip -d $BOX_DIR -o -x $BOX_DL
+    local subdir=$(cd $BOX_DIR; echo *box*)
+    mv $BOX_DIR/$subdir/* $BOX_DIR
+    mv $BOX_DIR/$subdir/.??* BOX_DIR
+    rmdir $BOX_DIR/$subdir
+}
 
 # ================================================================================
 # Main
@@ -92,6 +128,15 @@ PISH=$PISH_ROOT/bin/pish
 function converge_defaults()
 {
     requirement 1pass_login
+    requirement box_installed
 }
 
 converge "$@"
+
+# echo "--------------------------------------------------------------------------------"
+# echo
+# echo "Starting bash in $BOX_DIR ..."
+# echo "Run ./install.sh ..."
+# echo
+# cd $BOX_DIR
+# bash
