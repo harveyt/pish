@@ -22,9 +22,9 @@ _1PASS_DL	= $(DOWNLOADS)/1pass.tar.gz
 _1PASS_DIR	= $(DOWNLOADS)/1pass
 _1PASS_BIN	= $(_1PASS_DIR)/1pass-$(_1PASS_VERSION)/1pass
 
-OP_VERSION	= 0.5
+OP_VERSION	= 0.5.1
 OP_SYSTEM	= darwin_amd64
-OP_URL		= https://cache.agilebits.com/dist/1P/op/pkg/v0.5/op_$(OP_SYSTEM)_v$(OP_VERSION).zip
+OP_URL		= https://cache.agilebits.com/dist/1P/op/pkg/v$(OP_VERSION)/op_$(OP_SYSTEM)_v$(OP_VERSION).zip
 OP_DL		= $(DOWNLOADS)/op.zip
 OP_DIR		= $(DOWNLOADS)/op
 OP_BIN		= $(DOWNLOADS)/op/op
