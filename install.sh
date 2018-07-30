@@ -20,12 +20,12 @@ PISH_DOWNLOAD_ROOT=$HOME/Downloads/pish
 PISH_DOWNLOAD_EXEC=$PISH_DOWNLOAD_ROOT/lib/pish/exec
 
 # Private box configuration
-BOX_1PASS_TAG=Bitbucket
+BITBUCKET_1PASS_TAG=Bitbucket
 BOX_URL=https://bitbucket.org/harveyt/box-macosx-harveyt/get/master.zip
 BOX_DL=$HOME/Downloads/box.zip
 BOX_ROOT=$HOME/Downloads/box
 
-CURL=curl -L -J
+CURL="curl -L -J"
 
 # ================================================================================
 # Install
@@ -108,17 +108,15 @@ function box_installed_TEST()
     [[ -d "$BOX_ROOT" ]]
 }
 
-function box_installed_EXEC()
+function box_installed_SHELL()
 {
-    local bitbucket_user=$(1pass -u $BITBUCKET_1PASS_TAG)
-    local bitbucket_password=$(1pass -p $BITBUCKET_1PASS_TAG)
-    $CURL --user "$bitbucket_user:$bitbucket_password" -o $BOX_DL $BOX_URL
-    mkdir -p $BOX_DIR
-    unzip -d $BOX_DIR -o -x $BOX_DL
-    local subdir=$(cd $BOX_DIR; echo *box*)
-    mv $BOX_DIR/$subdir/* $BOX_DIR
-    mv $BOX_DIR/$subdir/.??* BOX_DIR
-    rmdir $BOX_DIR/$subdir
+    $CURL --user "$BITBUCKET_USER:$BITBUCKET_PASSWORD" -o $BOX_DL $BOX_URL
+    mkdir -p $BOX_ROOT
+    unzip -d $BOX_ROOT -o -x $BOX_DL
+    local subdir=$(cd $BOX_ROOT; echo *box*)
+    mv $BOX_ROOT/$subdir/* $BOX_ROOT
+    mv $BOX_ROOT/$subdir/.??* BOX_ROOT
+    rmdir $BOX_ROOT/$subdir
 }
 
 # ================================================================================
@@ -128,15 +126,17 @@ function box_installed_EXEC()
 function converge_defaults()
 {
     requirement 1pass_login
+    requirement 1pass_get_user "$BITBUCKET_1PASS_TAG" BITBUCKET_USER
+    requirement 1pass_get_password "$BITBUCKET_1PASS_TAG" BITBUCKET_PASSWORD
     requirement box_installed
 }
 
 converge "$@"
 
-# echo "--------------------------------------------------------------------------------"
-# echo
-# echo "Starting bash in $BOX_DIR ..."
-# echo "Run ./install.sh ..."
-# echo
-# cd $BOX_DIR
-# bash
+echo "--------------------------------------------------------------------------------"
+echo
+echo "Starting bash in $BOX_ROOT ..."
+echo "Run ./install.sh ..."
+echo
+cd $BOX_ROOT
+bash
