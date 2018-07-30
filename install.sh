@@ -6,10 +6,10 @@
 # Configuration
 #
 
-PISH_URL=https://github.com/harveyt/pish.git
+PISH_URL=https://github.com/harveyt/pish/archive/master.zip
 PISH_LOCAL_BIN=/usr/local/bin
 PISH_LOCAL_LIB=/usr/local/lib/pish
-PISH_PROJECT_ROOT=$HOME/Projects/pish
+PISH_PROJECT_ROOT=$HOME/Projects/pish-TEST
 PISH_PROJECT_EXEC=$PISH_PROJECT_ROOT/lib/pish/exec
 
 # ================================================================================
@@ -39,7 +39,12 @@ function ensure_pish_installed()
     else
 	if [[ ! -d $PISH_PROJECT_ROOT ]]; then
 	    echo "Installing pish from $PISH_URL to $PISH_PROJECT_ROOT ..."
-	    git clone $PISH_URL $PISH_PROJECT_ROOT
+	    local dl=/tmp/pish.zip
+	    curl -L -J -o $dl $PISH_URL
+	    mkdir -p $PISH_PROJECT_ROOT
+	    unzip -d $PISH_PROJECT_ROOT -o -x $dl
+	    mv $PISH_PROJECT_ROOT/pish-master/* $PISH_PROJECT_ROOT
+	    rmdir $PISH_PROJECT_ROOT/pish-master
 	fi
 	echo "Using PISH_ROOT=$PISH_PROJECT_ROOT ..."
 	PISH_ROOT=$PISH_PROJECT_ROOT
@@ -72,7 +77,8 @@ PISH=$PISH_ROOT/bin/pish
 
 function converge_defaults()
 {
-    requirement 1pass_login
+    true
+    # requirement 1pass_login
 }
 
 converge "$@"
