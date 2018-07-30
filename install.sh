@@ -44,12 +44,12 @@ function ensure_1pass_binary()
 
 function ensure_pish_installed()
 {
+    local rootpath
+    
     if [[ -d $PISH_LOCAL_LIB ]]; then
-	echo "Using PISH_ROOT=$PISH_LOCAL_LIB ..."
-	PISH_ROOT=$PISH_LOCAL_LIB
+	rootpath=$PISH_LOCAL_LIB
     elif [[ -d $PISH_PROJECT_ROOT ]]; then
-	echo "Using PISH_ROOT=$PISH_PROJECT_ROOT ..."
-	PISH_ROOT=$PISH_PROJECT_ROOT
+	rootpath=$PISH_PROJECT_ROOT
     else
 	if [[ ! -d $PISH_DOWNLOAD_ROOT ]]; then
 	    echo "Installing pish from $PISH_URL to $PISH_DOWNLOAD_ROOT ..."
@@ -60,16 +60,16 @@ function ensure_pish_installed()
 	    mv $PISH_DOWNLOAD_ROOT/pish-master/* $PISH_DOWNLOAD_ROOT
 	    rmdir $PISH_DOWNLOAD_ROOT/pish-master
 	fi
-	echo "Using PISH_ROOT=$PISH_DOWNLOAD_ROOT ..."
-	PISH_ROOT=$PISH_DOWNLOAD_ROOT
+	rootpath=$PISH_DOWNLOAD_ROOT
     fi
-
-    ensure_1pass_binary 1pass _1PASS
-    ensure_1pass_binary op _1PASS_OP
-    ensure_1pass_binary jq _1PASS_JQ
+    echo "Using PISH_ROOT=$rootpath ..."
+    export PISH_ROOT=$rootpath
 }
 
 ensure_pish_installed
+ensure_1pass_binary 1pass _1PASS
+ensure_1pass_binary op _1PASS_OP
+ensure_1pass_binary jq _1PASS_JQ
 
 # ================================================================================
 # Library
