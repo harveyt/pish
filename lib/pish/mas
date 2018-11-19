@@ -21,12 +21,33 @@ function mas_install_DESC()
     echo "install $name from AppStore"
 }
 
+function mas_find_key
+{
+    local key="$1" name="$2"
+    local installed status=1 try=1 retval
+
+    while [[ $status -ne 0 ]]; do
+	installed="$(mas list 2>/dev/null | sed -n -e "/^$key /p")"
+	status=$?
+	if [[ "$installed" != "" ]]; then
+	    retval=0
+	else
+	    retval=1
+	fi
+	echo -n "[Try $try: status=$status retval=$retval] "
+
+	if [[ $status -ne 0 ]]; then
+	    sleep 1
+	fi
+    done
+    return $retval
+}
+
 function mas_install_TEST()
 {
     local key="$1" name="$2"
-    local installed="$(mas list 2>/dev/null | sed -n -e "/^$key /p")"
-    [[ "$installed" != "" ]]
-}
+    mas_find_key "$key" "$name"
+}    
 
 function mas_install_SHELL()
 {
