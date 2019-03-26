@@ -30,13 +30,13 @@ esac
 PISH_LOCAL_BIN=/usr/local/bin
 PISH_LOCAL_LIB=/usr/local/lib/pish
 PISH_PROJECT_ROOT=$HOME/Projects/pish
-PISH_PROJECT_EXEC=$PISH_PROJECT_ROOT/lib/pish/exec/$(OS_CONFIG)
+PISH_PROJECT_EXEC=$PISH_PROJECT_ROOT/lib/pish/exec/$OS_CONFIG
 PISH_DOWNLOAD_ROOT=$HOME/Downloads/pish
-PISH_DOWNLOAD_EXEC=$PISH_DOWNLOAD_ROOT/lib/pish/exec/$(OS_CONFIG)
+PISH_DOWNLOAD_EXEC=$PISH_DOWNLOAD_ROOT/lib/pish/exec/$OS_CONFIG
 
 # Private box configuration
 BITBUCKET_1PASS_TAG=Bitbucket
-BOX_URL=https://bitbucket.org/harveyt/$(BOX_CONFIG)/get/master.zip
+BOX_URL=https://bitbucket.org/harveyt/$BOX_CONFIG/get/master.zip
 BOX_DL=$HOME/Downloads/box.zip
 BOX_ROOT=$HOME/Downloads/box
 
@@ -151,7 +151,7 @@ converge "$@"
 echo "--------------------------------------------------------------------------------"
 echo
 echo "Starting bash in $BOX_ROOT ..."
-echo "Run ./install.sh ..."
+echo "Run ./provision.sh ..."
 echo
 cd $BOX_ROOT
 bash
