@@ -30,27 +30,25 @@ set PACKAGES=wget,ca-certificates,gnupg
 
 rem ================================================================================
 
-if not exist %CYGWIN_BASE% goto install
-ECHO The directory %CYGWIN_BASE% already exists.
-ECHO Cannot install over an existing installation.
-goto exit
+if not exist %CYGWIN_BASE% (
+	echo Creating Cygwin in %CYGWIN_BASE% ...
+	mkdir "%CYGWIN_BASE%"
+)
 
-:install
-
-echo Creating Cygwin in %CYGWIN_BASE% ...
-mkdir "%CYGWIN_BASE%"
 cd %CYGWIN_BASE%
 
-echo Downloading %CYGWIN_SETUP_EXE% from %CYGWIN_SETUP_URL% ...
-curl -L -J %CYGWIN_SETUP_URL% -o %CYGWIN_SETUP_EXE%
+if not exist %CYGWIN_SETUP_EXE% (
+	echo Downloading %CYGWIN_SETUP_EXE% from %CYGWIN_SETUP_URL% ...
+	curl -L -J %CYGWIN_SETUP_URL% -o %CYGWIN_SETUP_EXE%
+)
 
-echo Set up Cygwin base installation ...
-%CYGWIN_SETUP_EXE% --no-admin ^
-	--quiet-mode ^
-	--root %CYGWIN_BASE% ^
-	--site %CYGWIN_MIRROR_URL% ^
-	--local-package-dir %CYGWIN_PKG_CACHE% ^
-	--categories Base ^
-	--packages %PACKAGES%
-
-:exit
+if not exist bin (
+	echo Set up Cygwin base installation ...
+	%CYGWIN_SETUP_EXE% --no-admin ^
+		--quiet-mode ^
+		--root %CYGWIN_BASE% ^
+		--site %CYGWIN_MIRROR_URL% ^
+		--local-package-dir %CYGWIN_PKG_CACHE% ^
+		--categories Base ^
+		--packages %PACKAGES%
+)
