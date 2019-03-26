@@ -76,4 +76,6 @@ if not exist home\%USERNAME%\install.sh (
 if not exist home\%USERNAME%\Downloads\pish (
 	echo Running PISH install.sh ...
 	bin\bash --login -c './install.sh'	
-}
+)
+
+echo Completed install-win10
