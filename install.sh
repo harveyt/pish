@@ -8,6 +8,21 @@
 
 PISH_URL=https://github.com/harveyt/pish/archive/master.zip
 
+case $(uname -s) in
+    Darwan)
+	OS_CONFIG=mac
+	BOX_CONFIG=box-macosx-harveyt
+	;;
+    CYGWIN_NT-10.0)
+	OS_CONFIG=win10
+	BOX_CONFIG=box-win10-harveyt
+	;;
+    *)
+	echo "Unknown operating system: $(uname -s)" >&2
+	exit 1
+	;;
+esac
+
 # Preference order for finding binaries and scripts:
 # - /usr/local
 # - $HOME/Projecs/
@@ -15,13 +30,13 @@ PISH_URL=https://github.com/harveyt/pish/archive/master.zip
 PISH_LOCAL_BIN=/usr/local/bin
 PISH_LOCAL_LIB=/usr/local/lib/pish
 PISH_PROJECT_ROOT=$HOME/Projects/pish
-PISH_PROJECT_EXEC=$PISH_PROJECT_ROOT/lib/pish/exec
+PISH_PROJECT_EXEC=$PISH_PROJECT_ROOT/lib/pish/exec/$(OS_CONFIG)
 PISH_DOWNLOAD_ROOT=$HOME/Downloads/pish
-PISH_DOWNLOAD_EXEC=$PISH_DOWNLOAD_ROOT/lib/pish/exec
+PISH_DOWNLOAD_EXEC=$PISH_DOWNLOAD_ROOT/lib/pish/exec/$(OS_CONFIG)
 
 # Private box configuration
 BITBUCKET_1PASS_TAG=Bitbucket
-BOX_URL=https://bitbucket.org/harveyt/box-macosx-harveyt/get/master.zip
+BOX_URL=https://bitbucket.org/harveyt/$(BOX_CONFIG)/get/master.zip
 BOX_DL=$HOME/Downloads/box.zip
 BOX_ROOT=$HOME/Downloads/box
 
