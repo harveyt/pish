@@ -25,6 +25,9 @@ set CYGWIN_PKG_CACHE=%CYGWIN_BASE%\var\cache\apt\packages
 rem Where the apt-cyg version is located.
 set APT_CYG_URL=https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg
 
+rem Initial packages required to run base system and apt-cyg
+set PACKAGES=wget,ca-certificates,gnupg
+
 rem ================================================================================
 
 if not exist %CYGWIN_BASE% goto install
@@ -40,5 +43,14 @@ cd %CYGWIN_BASE%
 
 echo Downloading %CYGWIN_SETUP_EXE% from %CYGWIN_SETUP_URL% ...
 curl -L -J %CYGWIN_SETUP_URL% -o %CYGWIN_SETUP_EXE%
+
+echo Set up Cygwin base installation ...
+%CYGWIN_SETUP_EXE% --no-admin ^
+	--quiet-mode ^
+	--root %CYGWIN_BASE% ^
+	--site %CYGWIN_MIRROR_URL% ^
+	--local-package-dir %CYGWIN_PKG_CACHE% ^
+	--categories Base ^
+	--packages %PACKAGES%
 
 :exit
