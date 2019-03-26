@@ -54,7 +54,12 @@ if not exist bin (
 )
 
 if not exist bin\apt-cyg (
-	echo Set up apt-cyg ...   
+ 	echo Set up apt-cyg ...   
 	bin\wget -O /bin/apt-cyg %APT_CYG_URL%
 	bin\chmod +x /bin/apt-cyg
+)
+
+if not exist home\%USERNAME% (
+	echo Set up home directory ...
+	bin\bash --login -c 'echo Done'
 )
