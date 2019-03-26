@@ -14,10 +14,10 @@ MAC_EXECS		= $(wildcard $(MAC_EXECDIR)/*)
 # --------------------------------------------------------------------------------
 # Execs
 
-CURL			= curl -L -J
+CURL			= curl -L -J -\#
 TAR			= tar -v
 UNZIP			= unzip
-DOWNLOADS		= $(HOME)/Downloads
+DOWNLOADS		= $(HOME)/Downloads/pish-tmp
 
 MAC_1PASS_VERSION	= 1.1.0
 MAC_1PASS_URL		= https://github.com/harveyt/1pass/archive/$(_1PASS_VERSION).tar.gz
