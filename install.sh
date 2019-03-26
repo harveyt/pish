@@ -25,7 +25,7 @@ BOX_URL=https://bitbucket.org/harveyt/box-macosx-harveyt/get/master.zip
 BOX_DL=$HOME/Downloads/box.zip
 BOX_ROOT=$HOME/Downloads/box
 
-CURL="curl -L -J"
+CURL="curl -L -J -#"
 
 # ================================================================================
 # Install

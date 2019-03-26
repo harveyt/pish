@@ -39,7 +39,7 @@ cd %CYGWIN_BASE%
 
 if not exist %CYGWIN_SETUP_EXE% (
 	echo Downloading %CYGWIN_SETUP_EXE% from %CYGWIN_SETUP_URL% ...
-	curl -L -J %CYGWIN_SETUP_URL% -o %CYGWIN_SETUP_EXE%
+	curl -L -J -# %CYGWIN_SETUP_URL% -o %CYGWIN_SETUP_EXE%
 )
 
 if not exist bin (
