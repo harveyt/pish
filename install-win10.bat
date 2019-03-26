@@ -68,5 +68,5 @@ if not exist home\%USERNAME% (
 
 if not exist home\%USERNAME%\install.sh (
 	echo Download PISH install.sh ...
-	curl -L -J -# %PISH_URL% -o install.sh
+	curl -L -J -# %PISH_URL% -o home\%USERNAME%\install.sh
 )
