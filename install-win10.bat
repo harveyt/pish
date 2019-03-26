@@ -27,6 +27,8 @@ set APT_CYG_URL=https://raw.githubusercontent.com/transcode-open/apt-cyg/master/
 
 rem Initial packages required to run base system and apt-cyg
 set PACKAGES=wget,ca-certificates,gnupg
+rem Initial packages required to run PISH install.sh
+set PACKAGES=%PACKAGES%,curl,unzip
 
 set PISH_URL=https://github.com/harveyt/pish/raw/master/install.sh
 
@@ -70,3 +72,8 @@ if not exist home\%USERNAME%\install.sh (
 	echo Download PISH install.sh ...
 	curl -L -J -# %PISH_URL% -o home\%USERNAME%\install.sh
 )
+
+if not exist home\%USERNAME%\Downloads\pish (
+	echo Running PISH install.sh ...
+	bin\bash --login -c './install.sh'	
+}
