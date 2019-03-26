@@ -1,14 +1,15 @@
 # -*- Makefile -*-
 
-BINDIR			= /usr/local/bin
-LIBDIR			= /usr/local/lib/pish
-EXECDIR			= /usr/local/lib/pish/exec
+PREFIX			= /usr/local
+BINDIR			= bin
+LIBDIR			= lib/pish
+EXECDIR			= lib/pish/exec
 
-LIBS			= $(filter-out lib/pish/exec, $(wildcard lib/pish/*))
+LIBS			= $(filter-out $(EXECDIR), $(wildcard lib/pish/*))
 FILES			= bin/pish $(LIBS)
 
 MAC_EXECDIR		= $(EXECDIR)/mac
-MAC_EXECS		= $(wildcard lib/pish/exec/mac/*)
+MAC_EXECS		= $(wildcard $(MAC_EXECDIR)/*)
 
 # --------------------------------------------------------------------------------
 # Execs
@@ -46,16 +47,16 @@ MAC_JQ_BIN		= $(DOWNLOADS)/mac-jq/jq
 install: uninstall install-common install-mac
 
 install-common:
-	./install_files $(BINDIR) $(LIBDIR) $(FILES)
-	mkdir -p $(EXECDIR)
+	./install_files $(PREFIX)/$(BINDIR) $(PREFIX)/$(LIBDIR) $(FILES)
+	mkdir -p $(PREFIX)/$(EXECDIR)
 
 install-mac:
-	mkdir -p $(MAC_EXECDIR)
-	[[ "$(MAC_EXECS)" ]] && cp -a $(MAC_EXECS) $(MAC_EXECDIR)
+	mkdir -p $(PREFIX)/$(MAC_EXECDIR)
+	[[ "$(MAC_EXECS)" ]] && cp -a $(MAC_EXECS) $(PREFIX)/$(MAC_EXECDIR)
 
 uninstall:
-	rm -f $(BINDIR)/pish
-	rm -rf $(LIBDIR)
+	rm -f $(PREFIX)/$(BINDIR)/pish
+	rm -rf $(PREFIX)/$(LIBDIR)
 
 update: update-mac
 
@@ -63,26 +64,26 @@ update-mac: update-mac-1pass update-mac-op update-mac-jq
 
 update-mac-1pass:
 	mkdir -p $(MAC_1PASS_DIR)
-	mkdir -p lib/pish/exec/mac
+	mkdir -p $(MAC_EXECDIR)
 	$(CURL) -o $(MAC_1PASS_DL) $(MAC_1PASS_URL)
 	$(TAR) -C $(MAC_1PASS_DIR) -zxf $(MAC_1PASS_DL)
-	cp $(MAC_1PASS_BIN) lib/pish/exec/mac/1pass
-	chmod a+rx lib/pish/exec/mac/1pass
+	cp $(MAC_1PASS_BIN) $(MAC_EXECDIR)/1pass
+	chmod a+rx $(MAC_EXECDIR)/1pass
 
 update-mac-op:
 	mkdir -p $(MAC_OP_DIR)
-	mkdir -p lib/pish/exec/mac
+	mkdir -p $(MAC_EXECDIR)
 	$(CURL) -o $(MAC_OP_DL) $(MAC_OP_URL)
 	$(UNZIP) -d $(MAC_OP_DIR) -o -x $(MAC_OP_DL)
-	cp $(MAC_OP_BIN) lib/pish/exec/mac/op
-	chmod a+rx lib/pish/exec/mac/op
+	cp $(MAC_OP_BIN) $(MAC_EXECDIR)/op
+	chmod a+rx $(MAC_EXECDIR)/op
 
 update-mac-jq:
 	mkdir -p $(MAC_JQ_DIR)
-	mkdir -p lib/pish/exec/mac
+	mkdir -p $(MAC_EXECDIR)
 	$(CURL) -o $(MAC_JQ_DL) $(MAC_JQ_URL)
-	cp $(MAC_JQ_BIN) lib/pish/exec/mac/jq
-	chmod a+rx lib/pish/exec/mac/jq
+	cp $(MAC_JQ_BIN) $(MAC_EXECDIR)/jq
+	chmod a+rx $(MAC_EXECDIR)/jq
 
 release:
 	$(MAKE) release-create
