@@ -53,7 +53,7 @@ if not exist bin (
 		--packages %PACKAGES%
 )
 
-if not exist bin\wget (
+if not exist bin\apt-cyg (
 	echo Set up apt-cyg ...   
 	bin\wget -O /bin/apt-cyg %APT_CYG_URL%
 	bin\chmod +x /bin/apt-cyg
