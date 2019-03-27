@@ -30,7 +30,11 @@ set PACKAGES=wget,ca-certificates,gnupg
 rem Initial packages required to run PISH install.sh
 set PACKAGES=%PACKAGES%,curl,unzip
 
-set PISH_URL=https://github.com/harveyt/pish/raw/master/install.sh
+rem Where the install.sh script can be loaded from.
+set INSTALL_URL=https://github.com/harveyt/pish/raw/master/install.sh
+
+rem Where the local development version install.sh script can be copied from.
+set INSTALL_LOCAL=z:\harveyt\Projects\pish\install.sh
 
 rem Where the users home should be
 set HOME_DIR=home\%USERNAME%
@@ -40,6 +44,7 @@ set PROVISION_DIR=%HOME_DIR%\tmp\provision
 
 rem Where the provision directory should be in Unix path
 set UNIX_PROVISION_DIR=tmp/provision
+
 
 rem ================================================================================
 
@@ -83,8 +88,13 @@ if not exist %PROVISION_DIR% (
 )
 
 if not exist %PROVISION_DIR%\install.sh (
-	echo Download %UNIX_PROVISION_DIR%/install.sh ...
-	curl -L -J -# %PISH_URL% -o %PROVISION_DIR%\install.sh
+	if exist %INSTALL_LOCAL% (
+		echo Copy local %UNIX_PROVISION_DIR%/install.sh ...
+		copy %INSTALL_LOCAL% %PROVISION_DIR%\install.sh
+	) else (
+		echo Download %UNIX_PROVISION_DIR%/install.sh ...
+		curl -L -J -# %INSTALL_URL% -o %PROVISION_DIR%\install.sh
+	)
 )
 
 rem if exist %PROVISION_DIR%\pish (
