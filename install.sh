@@ -130,7 +130,7 @@ function box_installed_SHELL()
     unzip -d $BOX_ROOT -o -x $BOX_DL
     local subdir=$(cd $BOX_ROOT; echo *box*)
     mv $BOX_ROOT/$subdir/* $BOX_ROOT
-    mv $BOX_ROOT/$subdir/.??* BOX_ROOT
+    mv $BOX_ROOT/$subdir/.??* $BOX_ROOT
     rmdir $BOX_ROOT/$subdir
 }
 
