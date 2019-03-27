@@ -25,7 +25,7 @@ UPDATE_DIR		= $(HOME)/tmp/pish-update
 # --------------------------------------------------------------------------------
 # Mac Helpers
 
-MAC_1PASS_VERSION	= 1.2.1
+MAC_1PASS_VERSION	= 1.2.2
 MAC_1PASS_URL		= https://github.com/harveyt/1pass/archive/$(MAC_1PASS_VERSION).tar.gz
 MAC_1PASS_DL		= $(UPDATE_DIR)/mac/1pass.tar.gz
 MAC_1PASS_DIR		= $(UPDATE_DIR)/mac/1pass
@@ -48,7 +48,7 @@ MAC_JQ_BIN		= $(UPDATE_DIR)/mac/jq/jq
 # --------------------------------------------------------------------------------
 # Windows 10 Helpers
 
-WIN10_1PASS_VERSION	= 1.2.1
+WIN10_1PASS_VERSION	= 1.2.2
 WIN10_1PASS_URL		= https://github.com/harveyt/1pass/archive/$(WIN10_1PASS_VERSION).tar.gz
 WIN10_1PASS_DL		= $(UPDATE_DIR)/win10/1pass.tar.gz
 WIN10_1PASS_DIR		= $(UPDATE_DIR)/win10/1pass
