@@ -7,7 +7,7 @@
 #
 
 PISH_URL=https://github.com/harveyt/pish/archive/master.zip
-PISH_LOCAL_URL=/cygdrive/z/harveyt/tmp/pish-master.zip
+PISH_LOCAL=/cygdrive/z/harveyt/tmp/pish-master.zip
 
 case $(uname -s) in
     Darwan)
@@ -38,7 +38,7 @@ PISH_PROVISION_EXEC=$PISH_PROVISION_ROOT/lib/pish/exec/$OS_CONFIG
 # Private box configuration
 BITBUCKET_1PASS_TAG=Bitbucket
 BOX_URL=https://bitbucket.org/harveyt/$BOX_CONFIG/get/master.zip
-BOX_LOCAL_URL=/cygdrive/z/harveyt/tmp/$BOX_CONFIG-master.zip
+BOX_LOCAL=/cygdrive/z/harveyt/tmp/$BOX_CONFIG-master.zip
 BOX_DL=$HOME/tmp/provision/box.zip
 BOX_ROOT=$HOME/tmp/provision/box
 
@@ -80,9 +80,9 @@ function ensure_pish_installed()
 	rootpath=$PISH_PROJECT_ROOT
     else
 	if [[ ! -d $PISH_PROVISION_ROOT ]]; then
-	    if [[ -f $PISH_LOCAL_URL ]]; then
-		echo "Using local $PISH_LOCAL_URL ..."
-		PISH_URL=$PISH_LOCAL_URL
+	    if [[ -f $PISH_LOCAL ]]; then
+		echo "Using local $PISH_LOCAL ..."
+		PISH_URL=file://$PISH_LOCAL
 	    fi
 		
 	    echo "Installing pish from $PISH_URL to $PISH_PROVISION_ROOT ..."
@@ -135,9 +135,9 @@ function box_installed_TEST()
 
 function box_installed_SHELL()
 {
-    if [[ -f $BOX_LOCAL_URL ]]; then
-	echo "Using local $BOX_LOCAL_URL ..."
-	BOX_URL=$BOX_LOCAL_URL
+    if [[ -f $BOX_LOCAL ]]; then
+	echo "Using local $BOX_LOCAL ..."
+	BOX_URL=file://$BOX_LOCAL
     fi
 
     $CURL --user "$BITBUCKET_USER:$BITBUCKET_PASSWORD" -o $BOX_DL $BOX_URL
