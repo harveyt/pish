@@ -73,9 +73,8 @@ if not exist home\%USERNAME%\install.sh (
 	curl -L -J -# %PISH_URL% -o home\%USERNAME%\install.sh
 )
 
-if not exist home\%USERNAME%\Downloads\pish (
+if exist home\%USERNAME%\Downloads\pish (
 	echo Running PISH install.sh ...
 	bin\bash --login -c './install.sh'	
 )
 
-echo Completed install-win10
