@@ -61,7 +61,6 @@ function ensure_1pass_binary()
 	echo "Cannot find $name in:
 	$PISH_LOCAL_BIN
 	$PISH_PROJECT_EXEC
-	$PISH_CYGWIN_EXEC
 	$PISH_PROVISION_EXEC" >&2
 	exit 1
     fi
