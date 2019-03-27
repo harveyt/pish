@@ -150,6 +150,25 @@ update-win10-jq:
 	cp $(WIN10_JQ_BIN) $(WIN10_EXECDIR)/jq.exe
 	chmod a+rx $(WIN10_EXECDIR)/jq.exe
 
+.NOTPARALLEL: local
+
+local: local-pish local-win10 local-macosx
+
+local-pish:
+	rm -f $(HOME)/tmp/pish-master $(HOME)/tmp/pish-master.zip
+	ln -s $(HOME)/Projects/pish $(HOME)/tmp/pish-master
+	cd $(HOME)/tmp; zip -x '*.git*' -rq $(HOME)/tmp/pish-master.zip pish-master
+
+local-win10:
+	rm -f $(HOME)/tmp/box-win10-harveyt-master $(HOME)/tmp/box-win10-harveyt-master.zip
+	ln -s $(HOME)/Projects/box-win10-harveyt $(HOME)/tmp/box-win10-harveyt-master
+	cd $(HOME)/tmp;	zip -x '*.git*' -rq $(HOME)/tmp/box-win10-harveyt-master.zip box-win10-harveyt-master
+
+local-macosx:
+	rm -f $(HOME)/tmp/box-macosx-harveyt-master $(HOME)/tmp/box-macosx-harveyt-master.zip
+	ln -s $(HOME)/Projects/box-macosx-harveyt $(HOME)/tmp/box-macosx-harveyt-master
+	cd $(HOME)/tmp; zip -x '*.git*' -rq $(HOME)/tmp/box-macosx-harveyt-master.zip box-macosx-harveyt-master
+
 release:
 	$(MAKE) release-create
 	$(MAKE) release-publish

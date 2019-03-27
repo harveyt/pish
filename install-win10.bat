@@ -97,8 +97,7 @@ if not exist %PROVISION_DIR%\install.sh (
 	)
 )
 
-rem if exist %PROVISION_DIR%\pish (
-rem 	echo Running %UNIX_PROVISION_DIR%/install.sh ...
-rem 	bin\bash --login -c '%UNIX_PROVISION_DIR%/install.sh'
-rem )
-
+if exist %PROVISION_DIR%\pish (
+ 	echo Running %UNIX_PROVISION_DIR%/install.sh ...
+ 	bin\bash --login -c '%UNIX_PROVISION_DIR%/install.sh'
+)
