@@ -20,53 +20,53 @@ WIN10_EXECS		= $(wildcard $(WIN10_EXECDIR)/*)
 CURL			= curl -L -J -\#
 TAR			= tar -v
 UNZIP			= unzip
-DOWNLOADS		= $(HOME)/Downloads/pish-tmp
+UPDATE_DIR		= $(HOME)/tmp/pish-update
 
 # --------------------------------------------------------------------------------
 # Mac Helpers
 
 MAC_1PASS_VERSION	= 1.2.1
 MAC_1PASS_URL		= https://github.com/harveyt/1pass/archive/$(MAC_1PASS_VERSION).tar.gz
-MAC_1PASS_DL		= $(DOWNLOADS)/mac/1pass.tar.gz
-MAC_1PASS_DIR		= $(DOWNLOADS)/mac/1pass
+MAC_1PASS_DL		= $(UPDATE_DIR)/mac/1pass.tar.gz
+MAC_1PASS_DIR		= $(UPDATE_DIR)/mac/1pass
 MAC_1PASS_BIN		= $(MAC_1PASS_DIR)/1pass-$(MAC_1PASS_VERSION)/1pass
 
 MAC_OP_VERSION		= 0.5.5
 MAC_OP_SYSTEM		= darwin_amd64
 MAC_OP_URL		= https://cache.agilebits.com/dist/1P/op/pkg/v$(MAC_OP_VERSION)/op_$(MAC_OP_SYSTEM)_v$(MAC_OP_VERSION).zip
-MAC_OP_DL		= $(DOWNLOADS)/mac/op.zip
-MAC_OP_DIR		= $(DOWNLOADS)/mac/op
-MAC_OP_BIN		= $(DOWNLOADS)/mac/op/op
+MAC_OP_DL		= $(UPDATE_DIR)/mac/op.zip
+MAC_OP_DIR		= $(UPDATE_DIR)/mac/op
+MAC_OP_BIN		= $(UPDATE_DIR)/mac/op/op
 
 MAC_JQ_VERSION		= 1.6
 MAC_JQ_SYSTEM		= osx-amd64
 MAC_JQ_URL		= https://github.com/stedolan/jq/releases/download/jq-$(MAC_JQ_VERSION)/jq-$(MAC_JQ_SYSTEM)
-MAC_JQ_DIR		= $(DOWNLOADS)/mac/jq
-MAC_JQ_DL		= $(DOWNLOADS)/mac/jq/jq
-MAC_JQ_BIN		= $(DOWNLOADS)/mac/jq/jq
+MAC_JQ_DIR		= $(UPDATE_DIR)/mac/jq
+MAC_JQ_DL		= $(UPDATE_DIR)/mac/jq/jq
+MAC_JQ_BIN		= $(UPDATE_DIR)/mac/jq/jq
 
 # --------------------------------------------------------------------------------
 # Windows 10 Helpers
 
 WIN10_1PASS_VERSION	= 1.2.1
 WIN10_1PASS_URL		= https://github.com/harveyt/1pass/archive/$(WIN10_1PASS_VERSION).tar.gz
-WIN10_1PASS_DL		= $(DOWNLOADS)/win10/1pass.tar.gz
-WIN10_1PASS_DIR		= $(DOWNLOADS)/win10/1pass
+WIN10_1PASS_DL		= $(UPDATE_DIR)/win10/1pass.tar.gz
+WIN10_1PASS_DIR		= $(UPDATE_DIR)/win10/1pass
 WIN10_1PASS_BIN		= $(WIN10_1PASS_DIR)/1pass-$(WIN10_1PASS_VERSION)/1pass
 
 WIN10_OP_VERSION	= 0.5.5
 WIN10_OP_SYSTEM		= windows_amd64
 WIN10_OP_URL		= https://cache.agilebits.com/dist/1P/op/pkg/v$(WIN10_OP_VERSION)/op_$(WIN10_OP_SYSTEM)_v$(WIN10_OP_VERSION).zip
-WIN10_OP_DL		= $(DOWNLOADS)/win10/op.zip
-WIN10_OP_DIR		= $(DOWNLOADS)/win10/op
-WIN10_OP_BIN		= $(DOWNLOADS)/win10/op/op.exe
+WIN10_OP_DL		= $(UPDATE_DIR)/win10/op.zip
+WIN10_OP_DIR		= $(UPDATE_DIR)/win10/op
+WIN10_OP_BIN		= $(UPDATE_DIR)/win10/op/op.exe
 
 WIN10_JQ_VERSION	= 1.6
 WIN10_JQ_SYSTEM		= win64
 WIN10_JQ_URL		= https://github.com/stedolan/jq/releases/download/jq-$(WIN10_JQ_VERSION)/jq-$(WIN10_JQ_SYSTEM).exe
-WIN10_JQ_DIR		= $(DOWNLOADS)/win10/jq
-WIN10_JQ_DL		= $(DOWNLOADS)/win10/jq/jq.exe
-WIN10_JQ_BIN		= $(DOWNLOADS)/win10/jq/jq.exe
+WIN10_JQ_DIR		= $(UPDATE_DIR)/win10/jq
+WIN10_JQ_DL		= $(UPDATE_DIR)/win10/jq/jq.exe
+WIN10_JQ_BIN		= $(UPDATE_DIR)/win10/jq/jq.exe
 
 # --------------------------------------------------------------------------------
 # Targets
@@ -98,7 +98,7 @@ uninstall:
 update: update-clean update-mac update-win10
 
 update-clean:
-	rm -rf $(DOWNLOADS)
+	rm -rf $(UPDATE_DIR)
 
 update-mac: update-mac-1pass update-mac-op update-mac-jq
 
