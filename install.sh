@@ -26,14 +26,11 @@ esac
 # Preference order for finding binaries and scripts:
 # - /usr/local
 # - $HOME/Projects/pish
-# - /cygdrive/z/harveyt/Projects/pish
 # - $HOME/tmp/provision/pish
 PISH_LOCAL_BIN=/usr/local/bin
 PISH_LOCAL_LIB=/usr/local/lib/pish
 PISH_PROJECT_ROOT=$HOME/Projects/pish
 PISH_PROJECT_EXEC=$PISH_PROJECT_ROOT/lib/pish/exec/$OS_CONFIG
-PISH_CYGWIN_ROOT=/cygdrive/z/harveyt/Projects/pish
-PISH_CYGWIN_EXEC=$PISH_CYGWIN_ROOT/lib/pish/exec/$OS_CONFIG
 PISH_PROVISION_ROOT=$HOME/tmp/provision/pish
 PISH_PROVISION_EXEC=$PISH_PROVISION_ROOT/lib/pish/exec/$OS_CONFIG
 
@@ -58,8 +55,6 @@ function ensure_1pass_binary()
 	binpath=$PISH_LOCAL_BIN
     elif [[ -x $PISH_PROJECT_EXEC/$name ]]; then
 	binpath=$PISH_PROJECT_EXEC
-    elif [[ -x $PISH_CYGWIN_EXEC/$name ]]; then
-	binpath=$PISH_CYGWIN_EXEC
     elif [[ -x $PISH_PROVISION_EXEC/$name ]]; then
 	binpath=$PISH_PROVISION_EXEC
     else
@@ -82,8 +77,6 @@ function ensure_pish_installed()
 	rootpath=$PISH_LOCAL_LIB
     elif [[ -d $PISH_PROJECT_ROOT ]]; then
 	rootpath=$PISH_PROJECT_ROOT
-    elif [[ -d $PISH_CYGWIN_ROOT ]]; then
-	rootpath=$PISH_CYGWIN_ROOT
     else
 	if [[ ! -d $PISH_PROVISION_ROOT ]]; then
 	    echo "Installing pish from $PISH_URL to $PISH_PROVISION_ROOT ..."
