@@ -25,7 +25,7 @@ DOWNLOADS		= $(HOME)/Downloads/pish-tmp
 # --------------------------------------------------------------------------------
 # Mac Helpers
 
-MAC_1PASS_VERSION	= 1.1.0
+MAC_1PASS_VERSION	= 1.2.0
 MAC_1PASS_URL		= https://github.com/harveyt/1pass/archive/$(MAC_1PASS_VERSION).tar.gz
 MAC_1PASS_DL		= $(DOWNLOADS)/mac/1pass.tar.gz
 MAC_1PASS_DIR		= $(DOWNLOADS)/mac/1pass
@@ -48,7 +48,7 @@ MAC_JQ_BIN		= $(DOWNLOADS)/mac/jq/jq
 # --------------------------------------------------------------------------------
 # Windows 10 Helpers
 
-WIN10_1PASS_VERSION	= 1.1.0
+WIN10_1PASS_VERSION	= 1.2.0
 WIN10_1PASS_URL		= https://github.com/harveyt/1pass/archive/$(WIN10_1PASS_VERSION).tar.gz
 WIN10_1PASS_DL		= $(DOWNLOADS)/win10/1pass.tar.gz
 WIN10_1PASS_DIR		= $(DOWNLOADS)/win10/1pass
