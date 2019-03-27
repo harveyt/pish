@@ -25,14 +25,17 @@ esac
 
 # Preference order for finding binaries and scripts:
 # - /usr/local
-# - $HOME/Projecs/
-# - $HOME/Downloads/
+# - $HOME/Projects/pish
+# - /cygdrive/z/harveyt/Projects/pish
+# - $HOME/tmp/provision/pish
 PISH_LOCAL_BIN=/usr/local/bin
 PISH_LOCAL_LIB=/usr/local/lib/pish
 PISH_PROJECT_ROOT=$HOME/Projects/pish
 PISH_PROJECT_EXEC=$PISH_PROJECT_ROOT/lib/pish/exec/$OS_CONFIG
-PISH_DOWNLOAD_ROOT=$HOME/Downloads/pish
-PISH_DOWNLOAD_EXEC=$PISH_DOWNLOAD_ROOT/lib/pish/exec/$OS_CONFIG
+PISH_CYGWIN_ROOT=/cygdrive/z/harveyt/Projects/pish
+PISH_CYGWIN_EXEC=$PISH_CYGWIN_ROOT/lib/pish/exec/$OS_CONFIG
+PISH_PROVISION_ROOT=$HOME/tmp/provision/pish
+PISH_PROVISION_EXEC=$PISH_PROVISION_ROOT/lib/pish/exec/$OS_CONFIG
 
 # Private box configuration
 BITBUCKET_1PASS_TAG=Bitbucket
@@ -55,10 +58,16 @@ function ensure_1pass_binary()
 	binpath=$PISH_LOCAL_BIN
     elif [[ -x $PISH_PROJECT_EXEC/$name ]]; then
 	binpath=$PISH_PROJECT_EXEC
-    elif [[ -x $PISH_DOWNLOAD_EXEC/$name ]]; then
-	binpath=$PISH_DOWNLOAD_EXEC
+    elif [[ -x $PISH_CYGWIN_EXEC/$name ]]; then
+	binpath=$PISH_CYGWIN_EXEC
+    elif [[ -x $PISH_PROVISION_EXEC/$name ]]; then
+	binpath=$PISH_PROVISION_EXEC
     else
-	echo "Cannot find $name in $PISH_LOCAL_BIN, $PISH_PROJECT_EXEC or $PISH_DOWNLOAD_EXEC" >&2
+	echo "Cannot find $name in:
+	$PISH_LOCAL_BIN
+	$PISH_PROJECT_EXEC
+	$PISH_CYGWIN_EXEC
+	$PISH_PROVISION_EXEC" >&2
 	exit 1
     fi
     echo "Using $name from $binpath ..."
@@ -73,17 +82,19 @@ function ensure_pish_installed()
 	rootpath=$PISH_LOCAL_LIB
     elif [[ -d $PISH_PROJECT_ROOT ]]; then
 	rootpath=$PISH_PROJECT_ROOT
+    elif [[ -d $PISH_CYGWIN_ROOT ]]; then
+	rootpath=$PISH_CYGWIN_ROOT
     else
-	if [[ ! -d $PISH_DOWNLOAD_ROOT ]]; then
-	    echo "Installing pish from $PISH_URL to $PISH_DOWNLOAD_ROOT ..."
+	if [[ ! -d $PISH_PROVISION_ROOT ]]; then
+	    echo "Installing pish from $PISH_URL to $PISH_PROVISION_ROOT ..."
 	    local dl=/tmp/pish.zip
 	    $CURL -o $dl $PISH_URL
-	    mkdir -p $PISH_DOWNLOAD_ROOT
-	    unzip -d $PISH_DOWNLOAD_ROOT -o -x $dl
-	    mv $PISH_DOWNLOAD_ROOT/pish-master/* $PISH_DOWNLOAD_ROOT
-	    rmdir $PISH_DOWNLOAD_ROOT/pish-master
+	    mkdir -p $PISH_PROVISION_ROOT
+	    unzip -d $PISH_PROVISION_ROOT -o -x $dl
+	    mv $PISH_PROVISION_ROOT/pish-master/* $PISH_PROVISION_ROOT
+	    rmdir $PISH_PROVISION_ROOT/pish-master
 	fi
-	rootpath=$PISH_DOWNLOAD_ROOT
+	rootpath=$PISH_PROVISION_ROOT
     fi
     echo "Using PISH_ROOT=$rootpath ..."
     export PISH_ROOT=$rootpath
