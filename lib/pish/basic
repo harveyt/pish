@@ -55,3 +55,19 @@ function make_directory_SHELL()
 {
     mkdir -p "$1"
 }
+
+# --------------------------------------------------------------------------------
+function copy_file_DESC()
+{
+    echo "copy \"$1\" to \"$2\""
+}
+
+function copy_file_TEST()
+{
+    [[ -f "$2" ]]
+}
+
+function copy_file_SHELL()
+{
+    cp -a "$1" "$2"
+}
