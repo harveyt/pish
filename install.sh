@@ -40,8 +40,8 @@ PISH_PROVISION_EXEC=$PISH_PROVISION_ROOT/lib/pish/exec/$OS_CONFIG
 # Private box configuration
 BITBUCKET_1PASS_TAG=Bitbucket
 BOX_URL=https://bitbucket.org/harveyt/$BOX_CONFIG/get/master.zip
-BOX_DL=$HOME/Downloads/box.zip
-BOX_ROOT=$HOME/Downloads/box
+BOX_DL=$HOME/tmp/provision/box.zip
+BOX_ROOT=$HOME/tmp/provision/box
 
 CURL="curl -L -J -#"
 
