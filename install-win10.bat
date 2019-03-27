@@ -32,6 +32,15 @@ set PACKAGES=%PACKAGES%,curl,unzip
 
 set PISH_URL=https://github.com/harveyt/pish/raw/master/install.sh
 
+rem Where the users home should be
+set HOME_DIR=home\%USERNAME%
+
+rem Where the provision directory should be
+set PROVISION_DIR=%HOME_DIR%\tmp\provision
+
+rem Where the provision directory should be in Unix path
+set UNIX_PROVISION_DIR=tmp/provision
+
 rem ================================================================================
 
 if not exist %CYGWIN_BASE% (
@@ -39,7 +48,7 @@ if not exist %CYGWIN_BASE% (
 	mkdir "%CYGWIN_BASE%"
 )
 
-cd %CYGWIN_BASE%
+cd /d %CYGWIN_BASE%
 
 if not exist %CYGWIN_SETUP_EXE% (
 	echo Downloading %CYGWIN_SETUP_EXE% from %CYGWIN_SETUP_URL% ...
@@ -63,18 +72,23 @@ if not exist bin\apt-cyg (
 	bin\chmod +x /bin/apt-cyg
 )
 
-if not exist home\%USERNAME% (
-	echo Set up home directory ...
+if not exist %HOME_DIR% (
+	echo Set up home directory %HOME_DIR% ...
 	bin\bash --login -c 'echo Done'
 )
 
-if not exist home\%USERNAME%\install.sh (
-	echo Download PISH install.sh ...
-	curl -L -J -# %PISH_URL% -o home\%USERNAME%\install.sh
+if not exist %PROVISION_DIR% (
+	echo Create provision directory %PROVISION_DIR% ...
+	md %PROVISION_DIR%
 )
 
-if exist home\%USERNAME%\Downloads\pish (
-	echo Running PISH install.sh ...
-	bin\bash --login -c './install.sh'	
+if not exist %PROVISION_DIR%\install.sh (
+	echo Download %UNIX_PROVISION_DIR%/install.sh ...
+	curl -L -J -# %PISH_URL% -o %PROVISION_DIR%\install.sh
 )
+
+rem if exist %PROVISION_DIR%\pish (
+rem 	echo Running %UNIX_PROVISION_DIR%/install.sh ...
+rem 	bin\bash --login -c '%UNIX_PROVISION_DIR%/install.sh'
+rem )
 
