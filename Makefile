@@ -25,7 +25,7 @@ UPDATE_DIR		= $(HOME)/tmp/pish-update
 # --------------------------------------------------------------------------------
 # Mac Helpers
 
-MAC_1PASS_VERSION	= 1.2.2
+MAC_1PASS_VERSION	= 1.2.3
 MAC_1PASS_URL		= https://github.com/harveyt/1pass/archive/$(MAC_1PASS_VERSION).tar.gz
 MAC_1PASS_DL		= $(UPDATE_DIR)/mac/1pass.tar.gz
 MAC_1PASS_DIR		= $(UPDATE_DIR)/mac/1pass
@@ -48,7 +48,7 @@ MAC_JQ_BIN		= $(UPDATE_DIR)/mac/jq/jq
 # --------------------------------------------------------------------------------
 # Windows 10 Helpers
 
-WIN10_1PASS_VERSION	= 1.2.2
+WIN10_1PASS_VERSION	= 1.2.3
 WIN10_1PASS_URL		= https://github.com/harveyt/1pass/archive/$(WIN10_1PASS_VERSION).tar.gz
 WIN10_1PASS_DL		= $(UPDATE_DIR)/win10/1pass.tar.gz
 WIN10_1PASS_DIR		= $(UPDATE_DIR)/win10/1pass
@@ -152,22 +152,25 @@ update-win10-jq:
 
 .NOTPARALLEL: local
 
-local: local-pish local-win10 local-macosx
+local: local-clean local-pish local-win10 local-macosx
+
+local-clean:
+	rm -f $(HOME)/tmp/pish-master $(HOME)/tmp/pish-master.zip
+	rm -f $(HOME)/tmp/box-win10-harveyt-master $(HOME)/tmp/box-win10-harveyt-master.zip
+	rm -f $(HOME)/tmp/box-macosx-harveyt-master $(HOME)/tmp/box-macosx-harveyt-master.zip
 
 local-pish:
-	rm -f $(HOME)/tmp/pish-master $(HOME)/tmp/pish-master.zip
 	ln -s $(HOME)/Projects/pish $(HOME)/tmp/pish-master
 	cd $(HOME)/tmp; zip -x '*.git*' -rq $(HOME)/tmp/pish-master.zip pish-master
 
 local-win10:
-	rm -f $(HOME)/tmp/box-win10-harveyt-master $(HOME)/tmp/box-win10-harveyt-master.zip
 	ln -s $(HOME)/Projects/box-win10-harveyt $(HOME)/tmp/box-win10-harveyt-master
 	cd $(HOME)/tmp;	zip -x '*.git*' -rq $(HOME)/tmp/box-win10-harveyt-master.zip box-win10-harveyt-master
 
 local-macosx:
-	rm -f $(HOME)/tmp/box-macosx-harveyt-master $(HOME)/tmp/box-macosx-harveyt-master.zip
 	ln -s $(HOME)/Projects/box-macosx-harveyt $(HOME)/tmp/box-macosx-harveyt-master
 	cd $(HOME)/tmp; zip -x '*.git*' -rq $(HOME)/tmp/box-macosx-harveyt-master.zip box-macosx-harveyt-master
+
 
 release:
 	$(MAKE) release-create
