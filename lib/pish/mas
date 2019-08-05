@@ -54,4 +54,5 @@ function mas_install_SHELL()
     # TODO: Should check signed in, supply sign in automatically if required.
     local key="$1" name="$2"
     mas install "$key"
+    sleep 2
 }
