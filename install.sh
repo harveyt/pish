@@ -10,7 +10,7 @@ PISH_URL=https://github.com/harveyt/pish/archive/master.zip
 PISH_LOCAL=/cygdrive/z/harveyt/tmp/pish-master.zip
 
 case $(uname -s) in
-    Darwan)
+    Darwin)
 	OS_CONFIG=mac
 	BOX_CONFIG=box-macosx-harveyt
 	;;
