@@ -40,7 +40,8 @@ function brew_install_PREQ()
 function brew_install_DESC()
 {
     local name="$1"
-    echo "brew install $name"
+    shift
+    echo "brew install $name $@"
 }
 
 function brew_install_TEST()
@@ -52,7 +53,8 @@ function brew_install_TEST()
 function brew_install_SHELL()
 {
     local name="$1"
-    brew install "$name"
+    shift
+    brew install "$name" "$@"
 }
 
 # --------------------------------------------------------------------------------
@@ -165,4 +167,32 @@ function brew_tap_SHELL()
 {
     local name="$1"
     brew tap "$name"
+}
+
+# --------------------------------------------------------------------------------
+
+function brew_linkapp_PREQ()
+{
+    requirement sudo_cache_root_password
+}
+
+function brew_linkapp_DESC()
+{
+    local path="$1"
+    local name="$2"
+    echo "brew linkapp $path as $name"
+}
+
+function brew_linkapp_TEST()
+{
+    local path="$1"
+    local name="$2"
+    [[ -d /Applications/$name.app ]]
+}
+
+function brew_linkapp_SHELL()
+{
+    local path="$1"
+    local name="$2"
+    sudo ln -s $path /Applications/$name.app
 }
