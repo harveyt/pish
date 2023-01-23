@@ -48,7 +48,7 @@ function 1pass_add_repository_TEST()
 
 function 1pass_add_repository_SHELL()
 {
-    echo "deb [arch=amd64 signed-by=$OP_KEYRING] $OP_APT_SOURCE_URL stable main" | sudo tee $OP_APT_SOURCE
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=$OP_KEYRING] $OP_APT_SOURCE_URL stable main" | sudo tee $OP_APT_SOURCE
 }
 
 # ================================================================================
@@ -112,7 +112,7 @@ function 1pass_op_install_TEST()
 
 function 1pass_op_install_SHELL()
 {
-    sudo apt update && sudo apt install -y 1password
+    sudo apt update && sudo apt install -y 1password-cli
 }
 
 # # ================================================================================
