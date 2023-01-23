@@ -2,10 +2,6 @@
 #
 # Provision In SHell.
 #
-# Version: %%VERSION%%
-#
-# %%LICENSE%%
-#
 
 # ================================================================================
 # Configuration
@@ -32,7 +28,7 @@ VERBOSE_PREFIX=${VERBOSE_PREFIX:-}
 # ================================================================================
 # Option processing
 #
-short_opts="vqVt:"
+short_opts="vqVb:o:t:"
 
 function usage()
 {
@@ -43,8 +39,10 @@ Provision In SHell. Ensure a machine is provisioned according to some simple bas
 -v, --verbose	Verbose output to stderr (default).
 -q, --quiet	No verbose output to stderr.
 -V, --version	Show version to stderr.
+-b, --box	Name of the box configuration.
+-o, --os	Operating system type.
 
--t requirement	Run this given requirement (run defaults if none supplied).
+-t requirement	Run specified requirements (run defaults if none supplied).
 " >&2
     exit 1
 }
@@ -62,6 +60,12 @@ function process_opt()
 	    ;;
 	V|version)
 	    show_version
+	    ;;
+	b|box)
+	    BOX_CONFIG=$OPTARG
+	    ;;
+	o|os)
+	    OS_CONFIG=$OPTARG
 	    ;;
 	t)
 	    requirement $OPTARG
@@ -366,41 +370,49 @@ function requirement_run_all()
     done
 }
 
+function main()
+{
+    if [[ $BOX_CONFIG == "" ]]; then
+	error "Must provide --box=name argument for box configuration"
+    fi
+    if [[ $OS_CONFIG == "" ]]; then
+	error "Must provide --os=name argument for os configuration"
+    fi
+
+    verb "Running pish box '$BOX_CONFIG' for '$OS_CONFIG'..."
+
+    # if [[ ${#REQUIREMENTS[@]} != 0 ]]
+    # then
+    #     requirement_run_all
+    # else
+    #     converge_defaults
+    # fi
+}
+
 # ================================================================================
 # Main
 #
-
-function converge()
-{
-    while getopts "${short_opts}-:" c "$@"
-    do
-	case "$c" in
-	    -)
-		long_opt="$OPTARG"
-		OPTARG=""
-		process_opt "$long_opt"
-		;;
-	    *)
-		process_opt "$c"
-		;;
-	esac
-    done
-    shift $((OPTIND - 1))
-    if [[ $# -ne 0 ]]
-    then
-	usage
-    fi
-
-    if [[ ${#REQUIREMENTS[@]} == 0 ]]
-    then
-	converge_defaults
-    fi
-
-    requirement_run_all
-}
-
-if [[ "$SCRIPT_NAME" == "pish" ]]
+while getopts "${short_opts}-:" c "$@"
+do
+    case "$c" in
+	-)
+	    long_opt="${OPTARG%%=*}"
+	    long_arg="${OPTARG##*=}"
+	    OPTARG="$long_arg"
+	    process_opt "$long_opt"
+	    ;;
+	*)
+	    process_opt "$c"
+	    ;;
+    esac
+done
+shift $((OPTIND - 1))
+if [[ $# -ne 0 ]]
 then
-    converge "$@"
-    exit 0
+    usage
 fi
+
+main
+
+exit 0
+

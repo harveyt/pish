@@ -7,7 +7,7 @@ Why?
 ----
 
 I learned Chef, and that seemed complete overkill and complex for what I needed: a way to automate
-setting up some virtual machines and my MacBookPro.
+setting up some virtual and physical machines I use.
 
 If you need anything more complex, there are plenty of decent and fully featured provision and
 configuraiton management software out there.
