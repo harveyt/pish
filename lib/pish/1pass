@@ -112,7 +112,7 @@ function 1pass_op_install_TEST()
 
 function 1pass_op_install_SHELL()
 {
-    sudo apt update && sudo apt install 1password
+    sudo apt update && sudo apt install -y 1password
 }
 
 # # ================================================================================
