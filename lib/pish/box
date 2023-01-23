@@ -44,6 +44,11 @@ function box_load_LOCAL()
     if [[ ! -f $BOX_CONFIG/pish ]]; then
 	error "'$BOX_CONFIG' must have pish file in root"
     fi
+
+    # Ensure up to date.
+    (cd $BOX_CONFIG; git pull)
+
+    # Load it
     ". $BOX_CONFIG/pish"
     BOX_CONFIG_LOADED=true
 }
