@@ -26,3 +26,12 @@ Simplicity
     fails).
   * Once *exec* succeeds, then *validate* (or *test*) to ensure that has been updated to the expected
 	state, again written in `bash` script.
+
+How
+---
+
+Run the following command on Unix:
+
+```
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/harveyt/pish/HEAD/install.sh)"
+```
