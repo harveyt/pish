@@ -7,6 +7,9 @@
 # Configuration
 #
 
+export PISH_BOX="$HOME/Projects"
+export PISH_BOX_URL="git@github.com:harveyt/"
+
 # Determine script name
 SCRIPT_NAME="$(basename "$0" .sh)"
 SCRIPT_FILE="$(basename "$0")"
@@ -87,6 +90,7 @@ function show_version()
 
 function error()
 {
+    verb_end ""
     echo "Error: $SCRIPT_TAG: $*" >&2
     exit 1
 }
@@ -288,7 +292,7 @@ function converge_requirement()
 
 	if [[ "$set_requirement" != "" ]]
 	then
-	    echo "Adding \"$set_requirement\""
+	    verb "Adding \"$set_requirement\""
 	    requirement "$set_requirement"
 	fi
     fi
@@ -297,8 +301,9 @@ function converge_requirement()
 function converge_process_arguments()
 {
     local c
+    local OPTIND
     local set_requirement=""
-    
+
     while getopts s: c "$@"
     do
 	case $c in
@@ -370,6 +375,34 @@ function requirement_run_all()
     done
 }
 
+# ================================================================================
+# Main
+
+function process_main_args()
+{
+    local OPTIND
+    
+    while getopts "${short_opts}-:" c "$@"
+    do
+	case "$c" in
+	    -)
+		long_opt="${OPTARG%%=*}"
+		long_arg="${OPTARG##*=}"
+		OPTARG="$long_arg"
+		process_opt "$long_opt"
+		;;
+	    *)
+		process_opt "$c"
+		;;
+	esac
+    done
+    shift $((OPTIND - 1))
+    if [[ $# -ne 0 ]]
+    then
+	usage
+    fi
+}    
+
 function main()
 {
     if [[ $BOX_CONFIG == "" ]]; then
@@ -379,40 +412,45 @@ function main()
 	error "Must provide --os=name argument for os configuration"
     fi
 
-    verb "Running pish box '$BOX_CONFIG' for '$OS_CONFIG'..."
+    export PISH="$SCRIPT_PATH"
+    root="${SCRIPT_DIR%%/bin}"
+    export PISH_BIN="${root}/bin"
+    export PISH_LIB="${root}/lib/pish"
 
-    # if [[ ${#REQUIREMENTS[@]} != 0 ]]
-    # then
-    #     requirement_run_all
-    # else
-    #     converge_defaults
-    # fi
+    verb "Running pish box '$BOX_CONFIG' for '$OS_CONFIG'..."
+    verb ""    
+    verb "    PISH=$PISH"
+    verb "    PISH_BIN=$PISH_BIN"
+    verb "    PISH_LIB=$PISH_LIB"
+    verb "    PISH_BOX=$PISH_BOX"
+    verb ""
+    
+    verb "Loading libraries..."
+    for lib in $PISH_LIB/*
+    do
+	if [[ $lib == *~ ]]; then
+	    continue
+	fi
+	verb "    $lib"
+	. $lib
+    done
+    verb ""
+    verb "Running box..."
+    verb ""
+    
+    # Download and load box as required
+    BOX_CONFIG_LOADED=false    
+    requirement box_load
+
+    # Run all requirements (the box will typically add more than the above)
+    requirement_run_all
 }
 
 # ================================================================================
-# Main
+# Top Level
 #
-while getopts "${short_opts}-:" c "$@"
-do
-    case "$c" in
-	-)
-	    long_opt="${OPTARG%%=*}"
-	    long_arg="${OPTARG##*=}"
-	    OPTARG="$long_arg"
-	    process_opt "$long_opt"
-	    ;;
-	*)
-	    process_opt "$c"
-	    ;;
-    esac
-done
-shift $((OPTIND - 1))
-if [[ $# -ne 0 ]]
-then
-    usage
-fi
 
-main
-
+process_main_args "$@"
+main "$@"
 exit 0
 

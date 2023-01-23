@@ -1,0 +1,49 @@
+#!/bin/bash
+#
+# Box download and load
+#
+
+# ================================================================================
+# Box download
+#
+function box_download_DESC()
+{
+    echo "box '$BOX_CONFIG' is downloaded"
+}
+
+function box_download_TEST()
+{
+    test -d $PISH_BOX/$BOX_CONFIG
+}
+
+function box_download_SHELL()
+{
+    git clone $PISH_BOX_URL/$BOX_CONFIG $PISH_BOX/$BOX_CONFIG
+}
+
+# ================================================================================
+# Box loader
+#
+function box_load_PREQ()
+{
+    requirement box_download
+}
+
+function box_load_DESC()
+{
+    echo "box '$BOX_CONFIG' is loaded"
+}
+
+function box_load_TEST()
+{
+    $BOX_CONFIG_LOADED
+}
+
+function box_load_LOCAL()
+{
+    if [[ ! -f $BOX_CONFIG/pish ]]; then
+	error "'$BOX_CONFIG' must have pish file in root"
+    fi
+    ". $BOX_CONFIG/pish"
+    BOX_CONFIG_LOADED=true
+}
