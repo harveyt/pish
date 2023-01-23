@@ -437,10 +437,12 @@ function main()
     verb ""
     verb "Running box..."
     verb ""
-    
+
     # Download and load box as required
-    BOX_CONFIG_LOADED=false    
-    requirement box_load
+    requirement 1pass_op_install
+    
+    # BOX_CONFIG_LOADED=false    
+    # requirement box_load
 
     # Run all requirements (the box will typically add more than the above)
     requirement_run_all

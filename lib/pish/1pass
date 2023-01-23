@@ -3,143 +3,253 @@
 # 1Password and op command line.
 #
 
-# ================================================================================
-# 1Password Configuration
-#
-_1PASS=${_1PASS:-1pass}
-_1PASS_OP=${_1PASS_OP:-op}
-_1PASS_JQ=${_1PASS_JQ:-jq}
+OP_KEYRING_URL="https://downloads.1password.com/linux/keys/1password.asc"
+OP_KEYRING="/usr/share/keyrings/1password-archive-keyring.gpg"
+
+OP_APT_SOURCE_URL="https://downloads.1password.com/linux/debian/amd64"
+OP_APT_SOURCE="/etc/apt/sources.list.d/1password.list"
+
+OP_DEBSIG_POLICY_URL="https://downloads.1password.com/linux/debian/debsig/1password.pol"
+OP_DEBSIG_POLICY="/etc/debsig/policies/AC2D62742012EA22/1password.pol"
+
+OP_DEBSIG_KEYRING_URL="https://downloads.1password.com/linux/keys/1password.asc"
+OP_DEBSIG_KEYRING="/usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg"
 
 # ================================================================================
-# 1Password Requirements
-#
-# This will only pass if user is logged in.
-#
+# Add 1Password keyring
 
-function 1pass_logged_in_PREQ()
+function 1pass_add_keyring_DESC()
 {
-    requirement can_execute "$_1PASS"
-    requirement can_execute "$_1PASS_OP"
-    requirement can_execute "$_1PASS_JQ"
+    echo "add 1Password keyring"
 }
-
-function 1pass_logged_in_DESC()
-{
-    echo "logged into 1Password"
-}
-
-function 1pass_logged_in_TEST()
-{
-    "$_1PASS" --login-valid
-}
-
-# --------------------------------------------------------------------------------
-# This will login user if required
-#
-
-function 1pass_login_PREQ()
-{
-    requirement can_execute "$_1PASS"
-    requirement can_execute "$_1PASS_OP"
-    requirement can_execute "$_1PASS_JQ"
-}
-
-function 1pass_login_DESC()
-{
-    echo "login into 1Password"
-}
-
-function 1pass_login_TEST()
-{
-    "$_1PASS" --login-valid
-}
-
-function 1pass_login_LOCAL()
-{
-    export _1PASS_INPUT=terminal
-    $(eval "$_1PASS" --login)
-}
-
-# --------------------------------------------------------------------------------
-
-function 1pass_get_user_PREQ()
-{
-    requirement 1pass_logged_in
-}
-
-function 1pass_get_user_DESC()
-{
-    local user="$1"
-    local id="$2"
-    echo "has user for \"$user\" in $id"
-}
-
-function 1pass_get_user_TEST()
-{
-    local user="$1"
-    local id="$2"
-    local USER="$(eval echo \$$id)"
     
-    [[ "$USER" != "" ]]
+function 1pass_add_keyring_TEST()
+{
+    test -f $OP_KEYRING
 }
 
-function 1pass_get_user_LOCAL()
+function 1pass_add_keyring_SHELL()
 {
-    local user="$1"
-    local id="$2"
-
-    eval $id=\""$("$_1PASS" -u "$user")"\"
+    curl -sS $OP_KEYRING_URL | sudo gpg --dearmor --output $OP_KEYRING
 }
 
-# --------------------------------------------------------------------------------
+# ================================================================================
+# Add 1Password repository
 
-function 1pass_get_password_PREQ()
+function 1pass_add_repository_DESC()
 {
-    requirement 1pass_logged_in
+    echo "add 1Password to apt repository"
 }
-
-function 1pass_get_password_DESC()
-{
-    local user="$1"
-    local id="$2"
-    echo "has password for \"$user\" in $id"
-}
-
-function 1pass_get_password_TEST()
-{
-    local user="$1"
-    local id="$2"
-    local PASSWORD="$(eval echo \$$id)"
     
-    [[ "$PASSWORD" != "" ]]
-}
-
-function 1pass_get_password_LOCAL()
+function 1pass_add_repository_TEST()
 {
-    local user="$1"
-    local id="$2"
-
-    eval $id=\""$("$_1PASS" -p "$user")"\"
+    test -f $OP_APT_SOURCE
 }
 
-# --------------------------------------------------------------------------------
-
-function 1pass_get_master_password_PREQ()
+function 1pass_add_repository_SHELL()
 {
-    requirement 1pass_logged_in
+    echo "deb [arch=amd64 signed-by=$OP_KEYRING] $OP_APT_SOURCE_URL stable main" | sudo tee $OP_APT_SOURCE
 }
 
-function 1pass_get_master_password_DESC()
+# ================================================================================
+# Add 1Password debsig policy and keyrings
+
+function 1pass_add_debsig_policy_DESC()
 {
-    echo "has master password in _1PASS_MASTER_PASSWORD"
+    echo "add 1Password debsig policy"
+}
+    
+function 1pass_add_debsig_policy_TEST()
+{
+    test -f $OP_DEBSIG_POLICY
 }
 
-function 1pass_get_master_password_TEST()
+function 1pass_add_debsig_policy_SHELL()
 {
-    [[ "$_1PASS_MASTER_PASSWORD" != "" ]]
+    curl -sS $OP_DEBSIG_POLICY_URL | sudo tee $OP_DEBSIG_POLICY
 }
 
-function 1pass_get_master_password_LOCAL()
+# ================================================================================
+# Add 1Password debsig keyring
+
+function 1pass_add_debsig_keyring_DESC()
 {
-    _1PASS_MASTER_PASSWORD="$("$_1PASS" --master-password)"
+    echo "add 1Password debsig keyring"
 }
+    
+function 1pass_add_debsig_keyring_TEST()
+{
+    test -f $OP_DEBSIG_KEYRING
+}
+
+function 1pass_add_debsig_keyring_SHELL()
+{
+    curl -sS $OP_DEBSIG_KEYRING_URL | sudo gpg --dearmor --output $OP_DEBSIG_KEYRING
+}
+
+# ================================================================================
+# Install op command line
+
+function 1pass_op_install_PREQ()
+{
+    requirement 1pass_add_keyring
+    requirement 1pass_add_repository
+    requirement 1pass_add_debsig_policy
+    requirement 1pass_add_debsig_keyring    
+}
+
+function 1pass_op_install_DESC()
+{
+    echo "install 1Password op command line"
+}
+    
+function 1pass_op_install_TEST()
+{
+    type -p op >/dev/null
+}
+
+function 1pass_op_install_SHELL()
+{
+    sudo apt update && sudo apt install 1password
+}
+
+# # ================================================================================
+# # 1Password Configuration
+# #
+# _1PASS=${_1PASS:-1pass}
+# _1PASS_OP=${_1PASS_OP:-op}
+# _1PASS_JQ=${_1PASS_JQ:-jq}
+# 
+# # ================================================================================
+# # 1Password Requirements
+# #
+# # This will only pass if user is logged in.
+# #
+# 
+# function 1pass_logged_in_PREQ()
+# {
+#     requirement can_execute "$_1PASS"
+#     requirement can_execute "$_1PASS_OP"
+#     requirement can_execute "$_1PASS_JQ"
+# }
+# 
+# function 1pass_logged_in_DESC()
+# {
+#     echo "logged into 1Password"
+# }
+# 
+# function 1pass_logged_in_TEST()
+# {
+#     "$_1PASS" --login-valid
+# }
+# 
+# # --------------------------------------------------------------------------------
+# # This will login user if required
+# #
+# 
+# function 1pass_login_PREQ()
+# {
+#     requirement can_execute "$_1PASS"
+#     requirement can_execute "$_1PASS_OP"
+#     requirement can_execute "$_1PASS_JQ"
+# }
+# 
+# function 1pass_login_DESC()
+# {
+#     echo "login into 1Password"
+# }
+# 
+# function 1pass_login_TEST()
+# {
+#     "$_1PASS" --login-valid
+# }
+# 
+# function 1pass_login_LOCAL()
+# {
+#     export _1PASS_INPUT=terminal
+#     $(eval "$_1PASS" --login)
+# }
+# 
+# # --------------------------------------------------------------------------------
+# 
+# function 1pass_get_user_PREQ()
+# {
+#     requirement 1pass_logged_in
+# }
+# 
+# function 1pass_get_user_DESC()
+# {
+#     local user="$1"
+#     local id="$2"
+#     echo "has user for \"$user\" in $id"
+# }
+# 
+# function 1pass_get_user_TEST()
+# {
+#     local user="$1"
+#     local id="$2"
+#     local USER="$(eval echo \$$id)"
+#     
+#     [[ "$USER" != "" ]]
+# }
+# 
+# function 1pass_get_user_LOCAL()
+# {
+#     local user="$1"
+#     local id="$2"
+# 
+#     eval $id=\""$("$_1PASS" -u "$user")"\"
+# }
+# 
+# # --------------------------------------------------------------------------------
+# 
+# function 1pass_get_password_PREQ()
+# {
+#     requirement 1pass_logged_in
+# }
+# 
+# function 1pass_get_password_DESC()
+# {
+#     local user="$1"
+#     local id="$2"
+#     echo "has password for \"$user\" in $id"
+# }
+# 
+# function 1pass_get_password_TEST()
+# {
+#     local user="$1"
+#     local id="$2"
+#     local PASSWORD="$(eval echo \$$id)"
+#     
+#     [[ "$PASSWORD" != "" ]]
+# }
+# 
+# function 1pass_get_password_LOCAL()
+# {
+#     local user="$1"
+#     local id="$2"
+# 
+#     eval $id=\""$("$_1PASS" -p "$user")"\"
+# }
+# 
+# # --------------------------------------------------------------------------------
+# 
+# function 1pass_get_master_password_PREQ()
+# {
+#     requirement 1pass_logged_in
+# }
+# 
+# function 1pass_get_master_password_DESC()
+# {
+#     echo "has master password in _1PASS_MASTER_PASSWORD"
+# }
+# 
+# function 1pass_get_master_password_TEST()
+# {
+#     [[ "$_1PASS_MASTER_PASSWORD" != "" ]]
+# }
+# 
+# function 1pass_get_master_password_LOCAL()
+# {
+#     _1PASS_MASTER_PASSWORD="$("$_1PASS" --master-password)"
+# }
