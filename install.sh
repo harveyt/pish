@@ -62,6 +62,9 @@ clone_pish()
     if [[ ! -d $PISH_LOCAL ]]; then
 	echo "Cloning Pish into '$PISH_LOCAL'..."
 	git clone $PISH_URL $PISH_LOCAL
+    else
+	echo "Updating Pish at '$PISH_LOCAL'..."
+	(cd $PISH_LOCAL; git pull)
     fi
 }
 
