@@ -5,7 +5,7 @@
 
 FONT_LOCAL=$HOME/lib/fonts
 FONT_SHARE=/usr/local/share/fonts
-FONT_CACHE_UPDATED=false
+FONT_CACHE_UPDATED=true
 FONT_INSTALL_ALL=false
 
 # ================================================================================
@@ -66,6 +66,7 @@ function font_x11_install_SHELL()
     fi
     sudo cp "$FONT_LOCAL/$name" "$FONT_SHARE/$name"
     sudo chmod a+r "$FONT_SHARE/$name"
+    FONT_CACHE_UPDATED=false
 }
 
 # ================================================================================
