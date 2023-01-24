@@ -46,7 +46,7 @@ function box_fix_pish_remote_DESC()
 }
 
 # TODO: Move to common header somewhere, sigh.
-PISH_PROJECT_URL=git@github.com/harveyt/pish.git
+PISH_PROJECT_URL=git@github.com:harveyt/pish.git
 PISH_PROJECT_ROOT=$HOME/Projects/pish
 PISH_PROJECT_REMOTE=harveyt
 
