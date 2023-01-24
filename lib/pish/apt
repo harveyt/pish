@@ -57,7 +57,7 @@ function apt_add_repository_TEST()
     local user="${part%%/*}"
     local name="${part##*/}"
 
-    local existing=$(sed -n -e "\%deb http://ppa\..*/$user/$name/.*%p" /etc/apt/sources.list /etc/apt/sources.list.d/*)
+    local existing=$(sed -n -e "\%deb http.*/ppa\..*/$user/$name/.*%p" /etc/apt/sources.list /etc/apt/sources.list.d/*)
     [[ "$existing" != "" ]]
 }
 
