@@ -7,38 +7,38 @@
 # Configuration
 #
 
-PISH_URL="https://github.com/harveyt/pish.git"
-PISH_ROOT="$HOME/Projects/pish"
+function pish_configure()
+{
+    PISH_URL="https://github.com/harveyt/pish.git"
 
-PISH_BOX_ROOT="$HOME/Projects"
-PISH_BOX_URL="git@github.com:harveyt"
+    PISH_BOX_ROOT="$HOME/Projects"
+    PISH_BOX_URL="git@github.com:harveyt"
+}
 
 # ================================================================================
-# Determine script name
+# Determine script name and defaults
 #
-SCRIPT_NAME="$(basename "$0" .sh)"
-SCRIPT_FILE="$(basename "$0")"
-SCRIPT_DIR="$(cd "$(dirname "$0")"; pwd -P)"
-SCRIPT_PATH="$SCRIPT_DIR/$SCRIPT_FILE"
+function pish_init_script()
+{
+    PISH_NAME="$(basename "$0" .sh)"
 
-# What to show as prefix in output.
-if [[ "$SCRIPT_NAME" == "pish" ]]; then
-    SCRIPT_TAG="pish"
-else
-    SCRIPT_TAG="pish $SCRIPT_NAME"
-fi
+    local file="$(basename "$0")"
+    local dir="$(cd "$(dirname "$0")"; pwd -P)"
 
-# Verbose by default
-VERBOSE=${VERBOSE:-true}
+    PISH="$dir/$file"
+    PISH_ROOT="${dir%/bin}"
+    PISH_BIN="$PISH_ROOT/bin"
+    PISH_LIB="$PISH_ROOT/lib/pish"
 
-VERBOSE_PREFIX=${VERBOSE_PREFIX:-}
+    PISH_VERBOSE=${PISH_VERBOSE:-true}
+    PISH_VERBOSE_PREFIX=${PISH_VERBOSE_PREFIX:-}
+}
 
 # ================================================================================
 # Option processing
 #
-short_opts="vqVt:"
 
-function usage()
+function pish_usage()
 {
     echo "usage: pish ...
 
@@ -53,30 +53,30 @@ Provision In SHell. Ensure a machine is provisioned according to some simple bas
     exit 1
 }
 
-function process_opt()
+function pish_process_opt()
 {
     local opt="$1"
 
     case "$opt" in
 	v|verbose)
-	    VERBOSE=true
+	    PISH_VERBOSE=true
 	    ;;
 	q|quiet)
-	    VERBOSE=false
+	    PISH_VERBOSE=false
 	    ;;
 	V|version)
-	    show_version
+	    pish_show_version
 	    ;;
 	t)
 	    requirement $OPTARG
 	    ;;
 	*)
-	    usage
+	    pish_usage
 	    ;;
     esac
 }
 
-function show_version()
+function pish_show_version()
 {
     echo "pish %%VERSION%%" >&2
     exit 0
@@ -88,31 +88,31 @@ function show_version()
 function error()
 {
     verb_end ""
-    echo "Error: $SCRIPT_TAG: $*" >&2
+    echo "Error: $PISH_NAME: $*" >&2
     exit 1
 }
 
 function verb()
 {
-    [[ "$VERBOSE" != "true" ]] && return
-    echo "${VERBOSE_PREFIX}$*" >&2
+    [[ "$PISH_VERBOSE" != "true" ]] && return
+    echo "${PISH_VERBOSE_PREFIX}$*" >&2
 }
 
 function verb_begin()
 {
-    [[ "$VERBOSE" != "true" ]] && return
-    echo -n "${VERBOSE_PREFIX}$*" >&2
+    [[ "$PISH_VERBOSE" != "true" ]] && return
+    echo -n "${PISH_VERBOSE_PREFIX}$*" >&2
 }
 
 function verb_cont()
 {
-    [[ "$VERBOSE" != "true" ]] && return
+    [[ "$PISH_VERBOSE" != "true" ]] && return
     echo -n "$*" >&2
 }
 
 function verb_end()
 {
-    [[ "$VERBOSE" != "true" ]] && return
+    [[ "$PISH_VERBOSE" != "true" ]] && return
     echo "$*" >&2
 }
 
@@ -250,7 +250,7 @@ function converge_update_shell()
 
     verb "[$cmd] --- Shell --- "
 
-    local shell_prefix="${VERBOSE_PREFIX}[$cmd] "
+    local shell_prefix="${PISH_VERBOSE_PREFIX}[$cmd] "
     shift
     (
 	eval ${cmd}_SHELL $args 2>&1 | sed -e "s/^/$shell_prefix/"
@@ -375,7 +375,7 @@ function requirement_run_all()
 # ================================================================================
 # OS and Box Detection
 
-function detect_os()
+function pish_detect_os()
 {
     case $(uname -s) in
 	Darwin)
@@ -398,7 +398,7 @@ function detect_os()
     esac
 }
 
-function detect_box()
+function pish_detect_box()
 {
     PISH_HOST=$(hostname)
     case $PISH_HOST in
@@ -417,51 +417,54 @@ function detect_box()
 # ================================================================================
 # Main
 
-function process_main_args()
+function pish_process_main_args()
 {
     local OPTIND
     
-    while getopts "${short_opts}-:" c "$@"
+    while getopts "vqVt:-:" c "$@"
     do
 	case "$c" in
 	    -)
 		long_opt="${OPTARG%%=*}"
 		long_arg="${OPTARG##*=}"
 		OPTARG="$long_arg"
-		process_opt "$long_opt"
+		pish_process_opt "$long_opt"
 		;;
 	    *)
-		process_opt "$c"
+		pish_process_opt "$c"
 		;;
 	esac
     done
     shift $((OPTIND - 1))
     if [[ $# -ne 0 ]]
     then
-	usage
+	pish_usage
     fi
 }    
 
-function main()
+function pish_main()
 {
-    detect_os
-    detect_box
+    pish_init_script
+    pish_process_main_args "$@"
+    pish_detect_os
+    pish_detect_box
+    pish_configure
 
-    export PISH="$SCRIPT_PATH"
-    root="${SCRIPT_DIR%%/bin}"
-    export PISH_BIN="${root}/bin"
-    export PISH_LIB="${root}/lib/pish"
     export CURL="curl -fsSL"
     
     verb "Running pish box '$PISH_BOX' for '$PISH_OS'..."
     verb ""    
     verb "    PISH=$PISH"
+    verb "    PISH_ROOT=$PISH_ROOT"
     verb "    PISH_BIN=$PISH_BIN"
     verb "    PISH_LIB=$PISH_LIB"
+    verb "    PISH_BOX_ROOT=$PISH_BOX_ROOT"
     verb "    PISH_BOX=$PISH_BOX"
+    verb "    PISH_OS=$PISH_OS"
     verb ""
     
     verb "Loading libraries..."
+    verb ""
     for lib in $PISH_LIB/*
     do
 	if [[ $lib == *~ ]]; then
@@ -486,6 +489,5 @@ function main()
 # Top Level
 #
 
-process_main_args "$@"
-main "$@"
+pish_main "$@"
 exit 0
