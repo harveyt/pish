@@ -1,0 +1,43 @@
+#!/bin/bash
+#
+# Apt utilities
+#
+
+APT_UPDATED=false
+
+# ================================================================================
+# Ensure Apt is up-to-date
+
+function apt_updated_DESC()
+{
+    echo "apt is updated"
+}
+    
+function apt_updated_TEST()
+{
+    $APT_UPDATED
+}
+
+function 1pass_op_install_SHELL()
+{
+    sudo apt update
+    APT_UPDATED=true
+}
+
+# ================================================================================
+# Install via apt
+
+function apt_install_DESC()
+{
+    echo "apt install $1"
+}
+    
+function apt_install_TEST()
+{
+    [[ $(dpkg-query --show $1) != "" ]]
+}
+
+function apt_install_SHELL()
+{
+    sudo apt install -y $1
+}

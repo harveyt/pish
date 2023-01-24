@@ -99,7 +99,7 @@ function 1pass_op_install_PREQ()
     requirement 1pass_add_keyring
     requirement 1pass_add_repository
     requirement 1pass_add_debsig_policy
-    requirement 1pass_add_debsig_keyring    
+    requirement 1pass_add_debsig_keyring
 }
 
 function 1pass_op_install_DESC()
@@ -114,6 +114,7 @@ function 1pass_op_install_TEST()
 
 function 1pass_op_install_SHELL()
 {
+    # Adding a new source needs to force an apt update.
     sudo apt update && sudo apt install -y 1password-cli
 }
 
