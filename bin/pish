@@ -8,7 +8,7 @@
 #
 
 export PISH_BOX="$HOME/Projects"
-export PISH_BOX_URL="git@github.com:harveyt/"
+export PISH_BOX_URL="git@github.com:harveyt"
 
 # Determine script name
 SCRIPT_NAME="$(basename "$0" .sh)"
