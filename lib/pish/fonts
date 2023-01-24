@@ -92,6 +92,7 @@ function font_x11_fontcache_LOCAL()
 
 function font_x11_install_all_PREQ()
 {
+    requirement apt_install fontconfig
     requirement font_x11_install "https://github.com/googlefonts/Inconsolata/raw/master/fonts/otf/Inconsolata-Regular.otf"
     requirement font_x11_install "https://github.com/googlefonts/Inconsolata/raw/master/fonts/otf/Inconsolata-Bold.otf"
     requirement font_x11_fontcache
