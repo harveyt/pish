@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+# GPG / PGP
+#
+
+GPG_INSTALLED=false
+
+# ================================================================================
+# Ensure GPG home has right perms
+
+function gpg_home_perms_DESC()
+{
+    echo "ensure gpg home has good permissions"
+}
+
+function gpg_home_perms_TEST()
+{
+    local perms=$(stat --printf="%a" $GPG_HOME)
+    [[ "$perms" == "$GPG_HOME_PERMS" ]]
+}
+
+function gpg_home_perms_SHELL()
+{
+    chmod $GPG_HOME_PERMS $GPG_HOME
+}
+
+# ================================================================================
+# Main install target
+function gpg_install_PREQ()
+{
+    requirement gpg_home_perms    
+    requirement apt_install gpg
+    requirement apt_install pinentry-gtk2
+}
+
+function gpg_install_DESC()
+{
+    echo "ensure gpg is installed"
+}
+
+function gpg_install_TEST()
+{
+    $GPG_INSTALLED
+}
+
+function gpg_install_LOCAL()
+{
+    local major minor
+    eval $(gpg --version | sed -n -e 's/^gpg (GnuPG) \([0-9][0-9]*\)\.\([0-9][0-9]*\).*$/major=\1 minor=\2/p')
+    if [[ "$major" < $GPG_MAJOR ]]; then
+	error "gpg is $major.$minor, need at least $GPG_MAJOR.$GPG_MINOR"
+    fi
+    if [[ "$major" == $GPG_MAJOR && "$minor" < $GPG_MINOR ]]; then
+	error "gpg is $major.$minor, need at least $GPG_MAJOR.$GPG_MINOR"
+    fi
+    
+    GPG_INSTALLED=true
+}

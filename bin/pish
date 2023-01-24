@@ -49,6 +49,13 @@ function pish_configure()
     SSH_DIR=$HOME/.ssh
     SSH_ID_RSA=$SSH_DIR/id_rsa
     SSH_ID_RSA_PUB=$SSH_DIR/id_rsa.pub
+
+    # lib/pish/gpg
+    GPG_CONF=$HOME/lib/gpg/gpg.conf
+    GPG_HOME=$HOME/.gnupg
+    GPG_HOME_PERMS=700
+    GPG_MAJOR=2
+    GPG_MINOR=2
 }
 
 # ================================================================================
