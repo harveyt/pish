@@ -15,6 +15,7 @@ BOX_USER_CONFIG_URL=git@github.com:harveyt/config.git
 function box_pull_PREQ()
 {
     requirement ssh_has_keys
+    requirement ssh_known_hosts github.com
     requirement git_clone "$PISH_BOX_URL/$BOX_CONFIG" "$PISH_BOX/$BOX_CONFIG"
 }
 

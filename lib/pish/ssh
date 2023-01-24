@@ -37,3 +37,25 @@ function ssh_has_keys_LOCAL()
 	$OP document get "$BOX_CONFIG - id_rsa.pub" --output=$SSH_ID_RSA_PUB
     fi
 }
+
+# ================================================================================
+# Ensure SSH known hosts is present
+
+function ssh_known_hosts_DESC()
+{
+    local host="$1"
+    echo "ensure known host for '$host'"
+}
+    
+function ssh_known_hosts_TEST()
+{
+    local host="$1"
+    local entry="$(ssh-keygen -H -F "$host" 2>/dev/null)"
+    [[ "$entry" != "" ]]
+}
+
+function ssh_known_hosts_LOCAL()
+{
+    local host="$1"
+    ssh-keyscan -H "$host" >> $SSH_DIR/known_hosts
+}
