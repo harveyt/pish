@@ -3,8 +3,6 @@
 # Git utilities
 #
 
-PROJECTS_ROOT="$HOME/Projects"
-
 # ================================================================================
 # Git clone
 
@@ -25,7 +23,7 @@ function git_clone_SHELL()
 {
     local url="$1"
     local dir="$2"
-    git clone --origin=$USER "$url" "$dir"
+    git clone --origin=$GIT_ORIGIN "$url" "$dir"
 }
 
 # ================================================================================
@@ -41,7 +39,7 @@ function git_clone_project_TEST()
 {
     local url="$1"
     local dir="$(basename "$url")"
-    local path="$PROJECTS_ROOT/$dir"
+    local path="$GIT_PROJECTS_ROOT/$dir"
 
     test -d "$path"
 }
@@ -50,7 +48,7 @@ function git_clone_project_SHELL()
 {
     local url="$1"
     local dir="$(basename "$url")"
-    local path="$PROJECTS_ROOT/$dir"
+    local path="$GIT_PROJECTS_ROOT/$dir"
 
-    git clone --origin=$USER "$url" "$path"
+    git clone --origin=$GIT_ORIGIN "$url" "$path"
 }

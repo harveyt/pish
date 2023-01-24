@@ -3,10 +3,6 @@
 # GitHub / BitBucket / SSH Access
 #
 
-SSH_DIR=$HOME/.ssh
-SSH_ID_RSA=$SSH_DIR/id_rsa
-SSH_ID_RSA_PUB=$SSH_DIR/id_rsa.pub
-
 # ================================================================================
 # Get SSH configuration
 

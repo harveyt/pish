@@ -3,8 +3,6 @@
 # Font utilities
 #
 
-FONT_LOCAL=$HOME/lib/fonts
-FONT_SHARE=/usr/local/share/fonts
 FONT_CACHE_UPDATED=true
 FONT_INSTALL_ALL=false
 

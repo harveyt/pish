@@ -9,10 +9,46 @@
 
 function pish_configure()
 {
+    # Pish
     PISH_URL="https://github.com/harveyt/pish.git"
 
     PISH_BOX_ROOT="$HOME/Projects"
     PISH_BOX_URL="git@github.com:harveyt"
+
+    # Curl
+    CURL="curl -fsSL"
+
+    # lib/pish/1pass
+    OP_KEYRING_URL="https://downloads.1password.com/linux/keys/1password.asc"
+    OP_KEYRING="/usr/share/keyrings/1password-archive-keyring.gpg"
+
+    OP_APT_SOURCE_URL="https://downloads.1password.com/linux/debian/amd64"
+    OP_APT_SOURCE="/etc/apt/sources.list.d/1password.list"
+
+    OP_DEBSIG_POLICY_URL="https://downloads.1password.com/linux/debian/debsig/1password.pol"
+    OP_DEBSIG_POLICY="/etc/debsig/policies/AC2D62742012EA22/1password.pol"
+
+    OP_DEBSIG_KEYRING_URL="https://downloads.1password.com/linux/keys/1password.asc"
+    OP_DEBSIG_KEYRING="/usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg"
+
+    OP=op
+
+    # lib/pish/git
+    GIT_ORIGIN=harveyt
+    GIT_PROJECTS_ROOT="$HOME/Projects"
+
+    # lib/pish/box
+    BOX_USER_CONFIG_URL=git@github.com:harveyt/config.git
+    BOX_CONFIG_FILE=$PISH_BOX_ROOT/$PISH_BOX/pish-config
+
+    # lib/pish/fonts
+    FONT_LOCAL=$HOME/lib/fonts
+    FONT_SHARE=/usr/local/share/fonts
+
+    # lib/pish/ssh
+    SSH_DIR=$HOME/.ssh
+    SSH_ID_RSA=$SSH_DIR/id_rsa
+    SSH_ID_RSA_PUB=$SSH_DIR/id_rsa.pub
 }
 
 # ================================================================================
@@ -450,8 +486,6 @@ function pish_main()
     pish_detect_box
     pish_configure
 
-    export CURL="curl -fsSL"
-    
     verb "Running pish box '$PISH_BOX' for '$PISH_OS'..."
     verb ""    
     verb "    PISH=$PISH"

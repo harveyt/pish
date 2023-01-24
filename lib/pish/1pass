@@ -3,20 +3,6 @@
 # 1Password and op command line.
 #
 
-OP_KEYRING_URL="https://downloads.1password.com/linux/keys/1password.asc"
-OP_KEYRING="/usr/share/keyrings/1password-archive-keyring.gpg"
-
-OP_APT_SOURCE_URL="https://downloads.1password.com/linux/debian/amd64"
-OP_APT_SOURCE="/etc/apt/sources.list.d/1password.list"
-
-OP_DEBSIG_POLICY_URL="https://downloads.1password.com/linux/debian/debsig/1password.pol"
-OP_DEBSIG_POLICY="/etc/debsig/policies/AC2D62742012EA22/1password.pol"
-
-OP_DEBSIG_KEYRING_URL="https://downloads.1password.com/linux/keys/1password.asc"
-OP_DEBSIG_KEYRING="/usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg"
-
-OP=op
-
 # ================================================================================
 # Add 1Password repository
 

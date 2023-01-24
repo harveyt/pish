@@ -3,11 +3,8 @@
 # Box download and load
 #
 
-BOX_CONFIG_FILE=$PISH_BOX_ROOT/$PISH_BOX/pish-config
 BOX_CONFIG_PULLED=false
 BOX_CONFIG_LOADED=false
-
-BOX_USER_CONFIG_URL=git@github.com:harveyt/config.git
 
 # ================================================================================
 # Box pull
@@ -45,21 +42,16 @@ function box_fix_pish_remote_DESC()
     echo 'pish has SSH git remote'
 }
 
-# TODO: Move to common header somewhere, sigh.
-PISH_PROJECT_URL=git@github.com:harveyt/pish.git
-PISH_PROJECT_ROOT=$HOME/Projects/pish
-PISH_PROJECT_REMOTE=harveyt
-
 function box_fix_pish_remote_TEST()
 {
-    local remote="$(cd $PISH_PROJECT_ROOT; git remote show -n $PISH_PROJECT_REMOTE | awk '$1 == "Fetch" && $2 == "URL:" { print $3 }')"
-    [[ "$remote" == "$PISH_PROJECT_URL" ]]
+    local remote="$(cd $PISH_ROOT; git remote show -n $GIT_ORIGIN | awk '$1 == "Fetch" && $2 == "URL:" { print $3 }')"
+    [[ "$remote" == "$PISH_URL" ]]
 }
 
 function box_fix_pish_remote_SHELL()
 {
-    cd $PISH_PROJECT_ROOT
-    git remote set-url $PISH_PROJECT_REMOTE $PISH_PROJECT_URL
+    cd $PISH_ROOT
+    git remote set-url $GIT_ORIGIN $PISH_URL
 }
 
 # ================================================================================
@@ -152,7 +144,7 @@ function box_user_config_SHELL()
 {
     cd $HOME
     mkdir -p $HOME/config
-    git clone --origin=$USER $BOX_USER_CONFIG_URL $HOME/config
+    git clone --origin=$GIT_ORIGIN $BOX_USER_CONFIG_URL $HOME/config
 
     box_user_config_install_config
     box_user_config_install_ssh
