@@ -4,6 +4,7 @@
 #
 
 GPG_INSTALLED=false
+GPG_TRUSTDB_VALIDATED=false
 
 # ================================================================================
 # Ensure GPG home has right perms
@@ -25,12 +26,145 @@ function gpg_home_perms_SHELL()
 }
 
 # ================================================================================
+# Ensure GPG Home configuration up-to-date
+
+function gpg_home_conf_DESC()
+{
+    echo "ensure gpg home configuration is good"
+}
+
+function gpg_home_conf_TEST()
+{
+    cmp -s $GPG_HOME/gpg.conf $GPG_CONF
+}
+
+function gpg_home_conf_SHELL()
+{
+    cp $GPG_CONF $GPG_HOME/gpg.conf
+}
+
+# ================================================================================
+# Ensure GPG Home downloads key from 1Password
+
+function gpg_op_download_DESC()
+{
+    local suffix="$1"
+    echo "ensure gpg key '$suffix' is downloaded from 1Password"
+}
+
+function gpg_op_download_TEST()
+{
+    local suffix="$1"
+    local file="gpg-${GPG_OP_DATE}-${GPG_OP_KEYID}-$suffix"
+    test -f "$GPG_HOME/$file"
+}
+
+function gpg_op_download_SHELL()
+{
+    local suffix="$1"
+    local file="gpg-${GPG_OP_DATE}-${GPG_OP_KEYID}-$suffix"
+    local doc="${GPG_OP_PREFIX}${file}"
+
+    op document get "$doc" --output "$GPG_HOME/$file"
+}
+
+# ================================================================================
+# Install a public key from encrypted file
+
+function gpg_op_install_PREQ()
+{
+    local suffix="$1"
+    requirement gpg_op_download "$suffix"
+}
+
+function gpg_op_install_DESC()
+{
+    local suffix="$1"
+    echo "ensure gpg key '$suffix' is installed"
+}
+
+function gpg_op_install_TEST()
+{
+    local suffix="$1"
+    local hexkey="0x$GPG_OP_KEYID"
+    local arg="--list-public-keys"    
+    local line="pub.*rsa4096/$hexkey"
+
+    if [[ "$suffix" == "secret-subkeys.txt" ]]; then
+	arg="--list-secret-keys"
+	line="sec#.*rsa4096/$hexkey"
+    fi
+    
+    local output=$(gpg $arg 0x$GPG_OP_KEYID 2>/dev/null | grep "$line")
+    [[ "$output" != "" ]]
+}
+
+function gpg_op_install_LOCAL()
+{
+    local suffix="$1"
+    local file="gpg-${GPG_OP_DATE}-${GPG_OP_KEYID}-$suffix"
+    
+    1pass_get_master_password | gpg --batch --pinentry-mode loopback --passphrase-fd 0 \
+			 --import "$GPG_HOME/$file"
+}
+
+# ================================================================================
+# Trust key
+
+function gpg_trust_key_DESC()
+{
+    local keyid="$1"
+    echo "trust in keyid '$keyid'"
+}
+
+function gpg_trust_key_TEST()
+{
+    local keyid="$1"
+    local output=$(gpg --list-keys $keyid | sed -n -e 's/^uid.*\[\([^]]*\)\].*$/\1/p' | egrep -v ultimate)
+    [[ "$output" == "" ]]
+}
+
+function gpg_trust_key_SHELL()
+{
+    local keyid="$1"
+    local fpr=$(gpg --list-keys --with-colons $keyid | awk -F: 'BEGIN { show=1 } /^fpr:/ { if (show) print $10; } /^sub:/ { show = 0; }')
+    echo -e "5\ny\n" | gpg --no-tty --command-fd 0 --expert --edit-key $fpr trust
+}
+
+# ================================================================================
+# Validate TrustDB
+
+function gpg_trustdb_validated_DESC()
+{
+    echo "trustdb is valid"
+}
+
+function gpg_trustdb_validated_TEST()
+{
+    local orig=$GPG_TRUSTDB_VALIDATED
+    GPG_TRUSTDB_VALIDATED=true
+    $orig
+}
+
+function gpg_trustdb_validated_SHELL()
+{
+    gpg --check-trustdb
+}
+
+
+# ================================================================================
 # Main install target
 function gpg_install_PREQ()
 {
-    requirement gpg_home_perms    
+    requirement 1pass_logged_in
+    requirement gpg_home_perms
+    requirement gpg_home_conf
     requirement apt_install gpg
     requirement apt_install pinentry-gtk2
+    requirement gpg_op_install public-keys.txt
+    requirement gpg_op_install secret-subkeys.txt
+    requirement gpg_trust_key $GPG_OP_KEYID
+    requirement gpg_trustdb_validated
 }
 
 function gpg_install_DESC()
@@ -53,6 +187,6 @@ function gpg_install_LOCAL()
     if [[ "$major" == $GPG_MAJOR && "$minor" < $GPG_MINOR ]]; then
 	error "gpg is $major.$minor, need at least $GPG_MAJOR.$GPG_MINOR"
     fi
-    
+
     GPG_INSTALLED=true
 }

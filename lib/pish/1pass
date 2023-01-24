@@ -126,7 +126,15 @@ function 1pass_logged_in_TEST()
     eval $(op signin)
     verb_begin "[1pass_logged_in] Test has logged into 1Password ... "
 }
- 
+
+# ================================================================================
+# Helper Functions
+
+function 1pass_get_master_password()
+{
+    $OP item get $OP_ACCOUNT_ID --fields label=master-password
+}
+
 # # --------------------------------------------------------------------------------
 # # This will login user if required
 # #

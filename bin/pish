@@ -33,6 +33,9 @@ function pish_configure()
 
     OP=op
 
+    # ID of item which represents actual account
+    OP_ACCOUNT_ID=iymn4u35ckh45zig37mmolcxbe
+
     # lib/pish/git
     GIT_ORIGIN=harveyt
     GIT_PROJECTS_ROOT="$HOME/Projects"
@@ -56,6 +59,10 @@ function pish_configure()
     GPG_HOME_PERMS=700
     GPG_MAJOR=2
     GPG_MINOR=2
+
+    GPG_OP_DATE=2022-02-02
+    GPG_OP_KEYID=B7DCFE052E3EA081
+    GPG_OP_PREFIX="GPG Backup - "
 }
 
 # ================================================================================
