@@ -18,24 +18,6 @@ OP_DEBSIG_KEYRING="/usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg"
 OP=op
 
 # ================================================================================
-# Add 1Password keyring
-
-function 1pass_add_keyring_DESC()
-{
-    echo "add 1Password keyring"
-}
-    
-function 1pass_add_keyring_TEST()
-{
-    test -f $OP_KEYRING
-}
-
-function 1pass_add_keyring_SHELL()
-{
-    $CURL $OP_KEYRING_URL | sudo gpg --dearmor --output $OP_KEYRING
-}
-
-# ================================================================================
 # Add 1Password repository
 
 function 1pass_add_repository_DESC()
@@ -96,7 +78,8 @@ function 1pass_add_debsig_keyring_SHELL()
 
 function 1pass_op_install_PREQ()
 {
-    requirement 1pass_add_keyring
+    requirement apt_add_keyring "$OP_KEYRING_URL" "$OP_KEYRING"
+    
     requirement 1pass_add_repository
     requirement 1pass_add_debsig_policy
     requirement 1pass_add_debsig_keyring

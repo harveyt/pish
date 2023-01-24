@@ -43,6 +43,30 @@ function apt_install_SHELL()
 }
 
 # ================================================================================
+# Add keyring
+
+function apt_add_keyring_DESC()
+{
+    local url="$1"
+    local key="$2"
+    echo "apt add key from '$url' to '$key'"
+}
+    
+function apt_add_keyring_TEST()
+{
+    local url="$1"
+    local key="$2"
+    test -f "$key"
+}
+
+function apt_add_keyring_SHELL()
+{
+    local url="$1"
+    local key="$2"
+    $CURL $url | sudo gpg --dearmor --output "$key"
+}
+
+# ================================================================================
 # Add repository
 
 function apt_add_repository_DESC()
@@ -54,10 +78,17 @@ function apt_add_repository_TEST()
 {
     local id="$1"
     local part="${id##ppa:}"
-    local user="${part%%/*}"
-    local name="${part##*/}"
-
-    local existing=$(sed -n -e "\%deb http.*/ppa\..*/$user/$name/.*%p" /etc/apt/sources.list /etc/apt/sources.list.d/*)
+    local existing=""
+    
+    if [[ "$part" != "$id" ]]; then
+	# ID must be ppa:user/name
+	local user="${part%%/*}"
+	local name="${part##*/}"
+	existing=$(sed -n -e "\%deb http.*/ppa\..*/$user/$name/.*%p" /etc/apt/sources.list /etc/apt/sources.list.d/*)
+    else
+	# ID must be a literal string
+	existing=$(sed -n -e "\%$id%p" /etc/apt/sources.list /etc/apt/sources.list.d/*)	
+    fi
     [[ "$existing" != "" ]]
 }
 
