@@ -34,7 +34,7 @@ function apt_install_DESC()
     
 function apt_install_TEST()
 {
-    dpkg-query --status $1 2>/dev/null
+    dpkg-query --status $1 2>/dev/null >/dev/null
 }
 
 function apt_install_SHELL()
