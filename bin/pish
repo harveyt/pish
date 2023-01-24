@@ -48,18 +48,21 @@ function pish_configure()
     FONT_LOCAL=$HOME/lib/fonts
     FONT_SHARE=/usr/local/share/fonts
 
+    # lib/pish/apt
+    APT_SOURCES_DIR=/etc/apt/sources.list.d
+    APT_ARCH=$(dpkg --print-architecture)
+    APT_CODENAME=$(lsb_release -a 2>/dev/null | awk '$1 == "Codename:" { print $2 }')
+
     # Emacs
-    # TODO: Fix jammy bit
-    EMACS_REPO_FILE=kelleyk-ubuntu-emacs-jammy.list
-    EMACS_REPO_ID="deb https://ppa.launchpadcontent.net/kelleyk/emacs/ubuntu/ jammy main"
+    EMACS_REPO_FILE=kelleyk-ubuntu-emacs-$APT_CODENAME.list
+    EMACS_REPO_ID="deb https://ppa.launchpadcontent.net/kelleyk/emacs/ubuntu/ $APT_CODENAME main"
 
     # LLVM
     LLVM_KEY="/etc/apt/trusted.gpg.d/llvm-snapshot.gpg"
     LLVM_KEY_URL="https://apt.llvm.org/llvm-snapshot.gpg.key"
     LLVM_VER=15
-    local codename=$(lsb_release -a 2>/dev/null | awk '$1 == "Codename:" { print $2 }')
-    LLVM_REPO_ID="deb http://apt.llvm.org/$codename/ llvm-toolchain-$codename-$LLVM_VER main"
-    LLVM_REPO_FILE="archive_uri-http_apt_llvm_org_jammy_-jammy.list"
+    LLVM_REPO_ID="deb http://apt.llvm.org/$APT_CODENAME/ llvm-toolchain-$APT_CODENAME-$LLVM_VER main"
+    LLVM_REPO_FILE="archive_uri-http_apt_llvm_org_${APT_CODENAME}_-${APT_CODENAME}.list"
 
     # lib/pish/ssh
     SSH_DIR=$HOME/.ssh
@@ -81,7 +84,7 @@ function pish_configure()
     GITHUB_KEY="/usr/share/keyrings/githubcli-archive-keyring.gpg"
     GITHUB_KEY_URL="https://cli.github.com/packages/githubcli-archive-keyring.gpg"
     GITHUB_REPO_FILE="github-cli.list"
-    GITHUB_REPO_ID="deb [arch=$(dpkg --print-architecture) signed-by=$GITHUB_KEY] https://cli.github.com/packages stable main"
+    GITHUB_REPO_ID="deb [arch=$APT_ARCH signed-by=$GITHUB_KEY] https://cli.github.com/packages stable main"
 }
 
 # ================================================================================

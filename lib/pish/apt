@@ -78,13 +78,13 @@ function apt_add_repository_TEST()
 {
     local id="$1"
     local file="$2"
-    test -f /etc/apt/sources.list.d/$file
+    test -f $APT_SOURCES_DIR/$file
 }
 
 function apt_add_repository_SHELL()
 {
     local id="$1"
     local file="$2"
-    echo "$id" | sudo dd of=/etc/apt/sources.list.d/$file
+    echo "$id" | sudo dd of=$APT_SOURCES_DIR/$file
     sudo apt update
 }
