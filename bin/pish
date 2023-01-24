@@ -66,6 +66,8 @@ function pish_init_script()
     PISH_BIN="$PISH_ROOT/bin"
     PISH_LIB="$PISH_ROOT/lib/pish"
 
+    PISH_FAST=${PISH_FAST:-false}
+
     PISH_VERBOSE=${PISH_VERBOSE:-true}
     PISH_VERBOSE_PREFIX=${PISH_VERBOSE_PREFIX:-}
 }

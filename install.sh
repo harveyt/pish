@@ -10,6 +10,8 @@ PISH_URL="https://github.com/harveyt/pish.git"
 PISH_ROOT="$HOME/Projects/pish"
 GIT_ORIGIN=harveyt
 
+export PISH_FAST=${PISH_FAST:-false}
+
 # --------------------------------------------------------------------------------
 clone_pish()
 {
@@ -17,8 +19,10 @@ clone_pish()
 	echo "Cloning Pish into '$PISH_ROOT'..."
 	git clone --origin=$GIT_ORIGIN $PISH_URL $PISH_ROOT
     else
-	echo "Updating Pish at '$PISH_ROOT'..."
-	(cd $PISH_ROOT; git pull)
+	if ! $PISH_FAST; then
+	    echo "Updating Pish at '$PISH_ROOT'..."
+	    (cd $PISH_ROOT; git pull)
+	fi
     fi
 }
 

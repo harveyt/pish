@@ -30,8 +30,10 @@ function box_pull_TEST()
 
 function box_pull_SHELL()
 {
-    cd $PISH_BOX_ROOT/$PISH_BOX
-    git pull
+    if ! $PISH_FAST; then    
+	cd $PISH_BOX_ROOT/$PISH_BOX
+	git pull
+    fi
 }
 
 # ================================================================================
@@ -79,7 +81,10 @@ function box_load_LOCAL()
 	error "'$PISH_BOX' must have '$BOX_CONFIG_FILE'"
     fi
 
-    # Load it
+    verb_end "Ok"
+    verb_begin "[box_load] Loading box ... "
+
+    # Load it    
     . $BOX_CONFIG_FILE
     BOX_CONFIG_LOADED=true
 }
