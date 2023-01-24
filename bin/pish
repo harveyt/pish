@@ -53,6 +53,14 @@ function pish_configure()
     EMACS_REPO_FILE=kelleyk-ubuntu-emacs-jammy.list
     EMACS_REPO_ID="deb https://ppa.launchpadcontent.net/kelleyk/emacs/ubuntu/ jammy main"
 
+    # LLVM
+    LLVM_KEY="/etc/apt/trusted.gpg.d/llvm-snapshot.gpg"
+    LLVM_KEY_URL="https://apt.llvm.org/llvm-snapshot.gpg.key"
+    LLVM_VER=15
+    local codename=$(lsb_release -a 2>/dev/null | awk '$1 == "Codename:" { print $2 }')
+    LLVM_REPO_ID="deb http://apt.llvm.org/$codename/ llvm-toolchain-$codename-$LLVM_VER main"
+    LLVM_REPO_FILE="archive_uri-http_apt_llvm_org_jammy_-jammy.list"
+
     # lib/pish/ssh
     SSH_DIR=$HOME/.ssh
     SSH_ID_RSA=$SSH_DIR/id_rsa
