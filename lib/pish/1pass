@@ -56,6 +56,11 @@ function 1pass_add_repository_SHELL()
 # ================================================================================
 # Add 1Password debsig policy and keyrings
 
+function 1pass_add_debsig_policy_PREQ()
+{
+    requirement directory_exists $(dirname "$OP_DEBSIG_POLICY")
+}
+
 function 1pass_add_debsig_policy_DESC()
 {
     echo "add 1Password debsig policy"
@@ -68,7 +73,6 @@ function 1pass_add_debsig_policy_TEST()
 
 function 1pass_add_debsig_policy_SHELL()
 {
-    sudo mkdir -p $(dirname "$OP_DEBSIG_POLICY")
     $CURL $OP_DEBSIG_POLICY_URL | sudo tee $OP_DEBSIG_POLICY
 }
 

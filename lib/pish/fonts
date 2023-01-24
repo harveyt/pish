@@ -40,6 +40,7 @@ function font_x11_install_PREQ()
     local url="$1"
     local name="$(basename "$url")"
     requirement font_download "$url"
+    requirement directory_exists "$FONT_SHARE"
 }
 
 function font_x11_install_DESC()
@@ -60,6 +61,7 @@ function font_x11_install_SHELL()
 {
     local url="$1"
     local name="$(basename "$url")"
+       
     sudo cp "$FONT_LOCAL/$name" "$FONT_SHARE/$name"
     sudo chmod a+r "$FONT_SHARE/$name"
 }
