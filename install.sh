@@ -7,8 +7,9 @@
 #
 
 PISH_URL=https://github.com/harveyt/pish.git
-PISH_LOCAL=$HOME/Projects/pish
-PISH_BIN=$PISH_LOCAL/bin
+PISH_ROOT=$HOME/Projects/pish
+PISH_BIN=$PISH_ROOT/bin
+PISH_LIB=$PISH_ROOT/lib/pish
 PISH_HOST=$(hostname)
 
 # --------------------------------------------------------------------------------
@@ -59,12 +60,12 @@ detect_box_os()
 
 clone_pish()
 {
-    if [[ ! -d $PISH_LOCAL ]]; then
-	echo "Cloning Pish into '$PISH_LOCAL'..."
-	git clone --origin=$USER $PISH_URL $PISH_LOCAL
+    if [[ ! -d $PISH_ROOT ]]; then
+	echo "Cloning Pish into '$PISH_ROOT'..."
+	git clone --origin=$USER $PISH_URL $PISH_ROOT
     else
-	echo "Updating Pish at '$PISH_LOCAL'..."
-	(cd $PISH_LOCAL; git pull)
+	echo "Updating Pish at '$PISH_ROOT'..."
+	(cd $PISH_ROOT; git pull)
     fi
 }
 
