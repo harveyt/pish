@@ -1,0 +1,108 @@
+#!/bin/bash
+#
+# Font utilities
+#
+
+FONT_LOCAL=$HOME/lib/fonts
+FONT_SHARE=/usr/local/share/fonts
+FONT_CACHE_UPDATED=false
+FONT_INSTALL_ALL=false
+
+# ================================================================================
+# Get font
+
+function font_download_DESC()
+{
+    local url="$1"
+    local name="$(basename "$url")"
+    echo "download font from '$url' to '$name'"
+}
+
+function font_download_TEST()
+{
+    local url="$1"
+    local name="$(basename "$url")"
+    test -f "$FONT_LOCAL/$name"
+}
+
+function font_download_SHELL()
+{
+    local url="$1"
+    local name="$(basename "$url")"
+    $CURL $url -o "$FONT_LOCAL/$name"
+}
+
+# ================================================================================
+# Install fonts
+
+function font_x11_install_PREQ()
+{
+    local url="$1"
+    local name="$(basename "$url")"
+    requirement font_download "$url"
+
+function font_x11_install_DESC()
+{
+    local url="$1"
+    local name="$(basename "$url")"
+    echo "install fonts for X11"
+}
+
+function font_x11_install_TEST()
+{
+    local url="$1"
+    local name="$(basename "$url")"
+    test -f "$FONT_SHARE/$name"
+}
+
+function font_x11_install_SHELL()
+{
+    local url="$1"
+    local name="$(basename "$url")"
+    sudo cp "$FONT_LOCAL/$name" "$FONT_SHARE/$name"
+    sudo chmod a+r "$FONT_SHARE/$name"
+}
+
+# ================================================================================
+# Update X11 font cache
+
+function font_x11_fontcache_DESC()
+{
+    echo "update X11 font cache"
+}
+
+function font_x11_fontcache_TEST()
+{
+    $FONT_CACHE_UPDATED
+}
+
+function font_x11_fontcache_LOCAL()
+{
+    fc-cache -f
+    FONT_CACHE_UPDATED=true
+}
+
+# ================================================================================
+# Install all required X11 fonts
+
+function font_x11_install_all_PREQ()
+{
+    requirement font_x11_install "https://github.com/googlefonts/Inconsolata/raw/master/fonts/otf/Inconsolata-Regular.otf"
+    requirement font_x11_install "https://github.com/googlefonts/Inconsolata/raw/master/fonts/otf/Inconsolata-Bold.otf"
+    requirement font_x11_fontcache
+}
+    
+function font_x11_install_all_DESC()
+{
+    echo "install all X11 fonts"
+}
+
+function font_x11_install_all_TEST()
+{
+    $FONT_INSTALL_ALL
+}
+
+function font_x11_install_all_LOCAL()
+{
+    FONT_INSTALL_ALL=true
+}
