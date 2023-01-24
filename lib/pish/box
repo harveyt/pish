@@ -10,30 +10,12 @@ BOX_CONFIG_LOADED=false
 BOX_USER_CONFIG_URL=git@github.com:harveyt/config.git
 
 # ================================================================================
-# Box download
-#
-function box_download_DESC()
-{
-    echo "box '$BOX_CONFIG' is downloaded"
-}
-
-function box_download_TEST()
-{
-    test -d $PISH_BOX/$BOX_CONFIG
-}
-
-function box_download_SHELL()
-{
-    git clone $PISH_BOX_URL/$BOX_CONFIG $PISH_BOX/$BOX_CONFIG
-}
-
-# ================================================================================
 # Box pull
 #
 function box_pull_PREQ()
 {
     requirement ssh_has_keys
-    requirement box_download
+    requirement git_clone "$PISH_BOX_URL/$BOX_CONFIG" "$PISH_BOX/$BOX_CONFIG"
 }
 
 function box_pull_DESC()
@@ -143,7 +125,7 @@ function box_user_config_SHELL()
 {
     cd $HOME
     mkdir -p $HOME/config
-    git clone $BOX_USER_CONFIG_URL $HOME/config
+    git clone --origin=$USER $BOX_USER_CONFIG_URL $HOME/config
 
     box_user_config_install_config
     box_user_config_install_ssh

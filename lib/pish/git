@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+# Git utilities
+#
+
+# ================================================================================
+# Git clone
+
+function git_clone_DESC()
+{
+    local url="$1"
+    local dir="$2"
+    echo "clone repository '$url' to '$dir'"
+}
+
+function git_clone_TEST()
+{
+    local dir="$2"
+    test -d "$dir"    
+}
+
+function git_clone_SHELL()
+{
+    local url="$1"
+    local dir="$2"
+    git clone --origin=$USER "$url" "$dir"
+}
