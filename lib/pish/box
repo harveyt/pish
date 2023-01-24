@@ -3,8 +3,9 @@
 # Box download and load
 #
 
-BOX_CONFIG_FILE=$BOX_CONFIG/pish-config
-BOX_CONFIG_LOADED=false    
+BOX_CONFIG_FILE=$PISH_BOX/$BOX_CONFIG/pish-config
+BOX_CONFIG_PULLED=false
+BOX_CONFIG_LOADED=false
 
 # ================================================================================
 # Box download
@@ -25,12 +26,38 @@ function box_download_SHELL()
 }
 
 # ================================================================================
+# Box pull
+#
+function box_pull_PREQ()
+{
+    requirement ssh_has_keys
+    requirement box_download
+}
+
+function box_pull_DESC()
+{
+    echo "box '$BOX_CONFIG' is up to date"
+}
+
+function box_pull_TEST()
+{
+    local status=$BOX_CONFIG_PULLED
+    BOX_CONFIG_PULLED=true
+    $status
+}
+
+function box_pull_SHELL()
+{
+    cd $PISH_BOX/$BOX_CONFIG
+    git pull
+}
+
+# ================================================================================
 # Box loader
 #
 function box_load_PREQ()
 {
-    requirement ssh_has_keys
-    requirement box_download
+    requirement box_pull
 }
 
 function box_load_DESC()
@@ -49,10 +76,7 @@ function box_load_LOCAL()
 	error "'$BOX_CONFIG' must have '$BOX_CONFIG_FILE'"
     fi
 
-    # Ensure up to date.
-    (cd $BOX_CONFIG; git pull)
-
     # Load it
-    ". $BOX_CONFIG_FILE"
+    . $BOX_CONFIG_FILE
     BOX_CONFIG_LOADED=true
 }
