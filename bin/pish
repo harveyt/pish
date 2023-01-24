@@ -366,6 +366,7 @@ function converge_process_arguments()
 # Requirement handling
 #
 declare -a REQUIREMENTS
+declare -A REQUIREMENTS_MAP
 
 function requirement()
 {
@@ -378,17 +379,16 @@ function requirement()
     
     local args="$(quote_args "$@")"
     REQUIREMENTS+=("$args")
+    REQUIREMENTS_MAP["$args"]=true
 }
 
 function requirement_exists()
 {
     local args="$(quote_args "$@")"
-    for requirement in "${REQUIREMENTS[@]}"
-    do
-	if [[ "$requirement" == "$args" ]]; then
-	    return 0
-	fi
-    done
+    local value=${REQUIREMENTS_MAP["$args"]}
+    if [[ "$value" != "" ]]; then
+	return 0
+    fi
     return 1
 }
     
@@ -404,6 +404,7 @@ function requirement_run_all()
 	# Pop one
 	local requirement="${REQUIREMENTS[0]}"
 	REQUIREMENTS=("${REQUIREMENTS[@]:1}")
+	unset REQUIREMENTS_MAP["$requirement"]
 
 	# Run it
 	eval converge_requirement $requirement

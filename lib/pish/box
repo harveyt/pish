@@ -81,10 +81,7 @@ function box_load_LOCAL()
 	error "'$PISH_BOX' must have '$BOX_CONFIG_FILE'"
     fi
 
-    verb_end "Ok"
-    verb_begin "[box_load] Loading box ... "
-
-    # Load it    
+    # Load it
     . $BOX_CONFIG_FILE
     BOX_CONFIG_LOADED=true
 }

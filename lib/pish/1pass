@@ -94,7 +94,9 @@ function 1pass_op_install_SHELL()
 
 function 1pass_logged_in_PREQ()
 {
-    requirement 1pass_op_install
+    if ! type -p $OP >/dev/null; then
+	requirement 1pass_op_install
+    fi
 }
 
 function 1pass_logged_in_DESC()
