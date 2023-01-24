@@ -3,6 +3,9 @@
 # Box download and load
 #
 
+BOX_CONFIG_FILE=$BOX_CONFIG/pish-config
+BOX_CONFIG_LOADED=false    
+
 # ================================================================================
 # Box download
 #
@@ -26,6 +29,7 @@ function box_download_SHELL()
 #
 function box_load_PREQ()
 {
+    requirement ssh_has_keys
     requirement box_download
 }
 
@@ -41,14 +45,14 @@ function box_load_TEST()
 
 function box_load_LOCAL()
 {
-    if [[ ! -f $BOX_CONFIG/pish ]]; then
-	error "'$BOX_CONFIG' must have pish file in root"
+    if [[ ! -f $BOX_CONFIG_FILE ]]; then
+	error "'$BOX_CONFIG' must have '$BOX_CONFIG_FILE'"
     fi
 
     # Ensure up to date.
     (cd $BOX_CONFIG; git pull)
 
     # Load it
-    ". $BOX_CONFIG/pish"
+    ". $BOX_CONFIG_FILE"
     BOX_CONFIG_LOADED=true
 }
