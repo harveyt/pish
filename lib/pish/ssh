@@ -3,8 +3,9 @@
 # GitHub / BitBucket / SSH Access
 #
 
-SSH_ID_RSA=$HOME/.ssh/id_rsa
-SSH_ID_RSA_PUB=$HOME/.ssh/id_rsa.pub
+SSH_DIR=$HOME/.ssh
+SSH_ID_RSA=$SSH_DIR/id_rsa
+SSH_ID_RSA_PUB=$SSH_DIR/id_rsa.pub
 
 # ================================================================================
 # Get SSH configuration
@@ -26,6 +27,9 @@ function ssh_has_keys_TEST()
 
 function ssh_has_keys_LOCAL()
 {
+    if [[ ! -d $SSH_DIR ]]; then
+	mkdir -p $SSH_DIR
+    fi
     if [[ ! -f $SSH_ID_RSA ]]; then
 	$OP document get "$BOX_CONFIG - id_rsa" --output=$SSH_ID_RSA
     fi
