@@ -18,7 +18,7 @@ function apt_updated_TEST()
     $APT_UPDATED
 }
 
-function 1pass_op_install_SHELL()
+function apt_updated_SHELL()
 {
     sudo apt update
     APT_UPDATED=true
