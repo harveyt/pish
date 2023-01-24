@@ -54,8 +54,8 @@ function apt_add_repository_TEST()
 {
     local id="$1"
     local part="${id##ppa:}"
-    local user="${part##*/}"
-    local name="${part%%/*}"
+    local user="${part%%/*}"
+    local name="${part##*/}"
 
     local existing=$(sed -n -e "\%deb http://ppa\..*/$user/$name/.*%p" /etc/apt/sources.list /etc/apt/sources.list.d/*)
     [[ "$existing" != "" ]]
@@ -65,4 +65,5 @@ function apt_add_repository_SHELL()
 {
     local id="$1"
     sudo add-apt-repository -y "$id"
+    sudo apt update
 }
