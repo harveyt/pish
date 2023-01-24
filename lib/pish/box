@@ -38,11 +38,37 @@ function box_pull_SHELL()
 }
 
 # ================================================================================
+# Fix the pish remote to be correct git style remote
+
+function box_fix_pish_remote_DESC()
+{
+    echo 'pish has SSH git remote'
+}
+
+# TODO: Move to common header somewhere, sigh.
+PISH_PROJECT_URL=git@github.com/harveyt/pish.git
+PISH_PROJECT_ROOT=$HOME/Projects/pish
+PISH_PROJECT_REMOTE=harveyt
+
+function box_fix_pish_remote_TEST()
+{
+    local remote="$(cd $PISH_PROJECT_ROOT; git remote show -n $PISH_PROJECT_REMOTE | awk '$1 == "Fetch" && $2 == "URL:" { print $3 }')"
+    [[ "$remote" == "$PISH_PROJECT_URL" ]]
+}
+
+function box_fix_pish_remote_SHELL()
+{
+    cd $PISH_PROJECT_ROOT
+    git remote set-url $PISH_PROJECT_REMOTE $PISH_PROJECT_URL
+}
+
+# ================================================================================
 # Box loader
 #
 function box_load_PREQ()
 {
     requirement box_pull
+    requirement box_fix_pish_remote
 }
 
 function box_load_DESC()
