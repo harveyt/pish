@@ -115,7 +115,8 @@ function 1pass_op_install_TEST()
 function 1pass_op_install_SHELL()
 {
     # Adding a new source needs to force an apt update.
-    sudo apt update && sudo apt install -y 1password-cli
+    sudo apt update
+    sudo apt install -y 1password-cli
 }
 
 # ================================================================================
