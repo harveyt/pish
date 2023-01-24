@@ -10,7 +10,7 @@
 function pish_configure()
 {
     # Pish
-    PISH_URL="https://github.com/harveyt/pish.git"
+    PISH_URL="git@github.com:harveyt/pish.git"
 
     PISH_BOX_ROOT="$HOME/Projects"
     PISH_BOX_URL="git@github.com:harveyt"
