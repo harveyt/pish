@@ -48,6 +48,11 @@ function pish_configure()
     FONT_LOCAL=$HOME/lib/fonts
     FONT_SHARE=/usr/local/share/fonts
 
+    # Emacs
+    # TODO: Fix jammy bit
+    EMACS_REPO_FILE=kelleyk-ubuntu-emacs-jammy.list
+    EMACS_REPO_ID="deb https://ppa.launchpadcontent.net/kelleyk/emacs/ubuntu/ jammy main"
+
     # lib/pish/ssh
     SSH_DIR=$HOME/.ssh
     SSH_ID_RSA=$SSH_DIR/id_rsa
@@ -63,6 +68,12 @@ function pish_configure()
     GPG_OP_DATE=2022-02-02
     GPG_OP_KEYID=B7DCFE052E3EA081
     GPG_OP_PREFIX="GPG Backup - "
+
+    # lib/pish/github
+    GITHUB_KEY="/usr/share/keyrings/githubcli-archive-keyring.gpg"
+    GITHUB_KEY_URL="https://cli.github.com/packages/githubcli-archive-keyring.gpg"
+    GITHUB_REPO_FILE="github-cli.list"
+    GITHUB_REPO_ID="deb [arch=$(dpkg --print-architecture) signed-by=$GITHUB_KEY] https://cli.github.com/packages stable main"
 }
 
 # ================================================================================

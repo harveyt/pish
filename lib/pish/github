@@ -1,0 +1,50 @@
+#!/bin/bash
+#
+# GitHub
+#
+
+GITHUB_INSTALLED=false
+
+# ================================================================================
+# Ensure GitHub key is present
+
+function github_key_avail_DESC()
+{
+    echo "ensure GitHub key is available"
+}
+
+function github_key_avail_TEST()
+{
+    test -f $GITHUB_KEY
+}
+
+function github_key_avail_SHELL()
+{
+    $CURL $GITHUB_KEY_URL | sudo dd of=$GITHUB_KEY
+    sudo chmod go+r $GITHUB_KEY
+}
+
+# ================================================================================
+# Main install target
+
+function github_install_PREQ()
+{
+    requirement github_key_avail
+    requirement apt_add_repository "$GITHUB_REPO_ID" "$GITHUB_REPO_FILE"
+    requirement apt_install gh
+}
+
+function github_install_DESC()
+{
+    echo "ensure gpg is installed"
+}
+
+function github_install_TEST()
+{
+    $GITHUB_INSTALLED
+}
+
+function github_install_LOCAL()
+{
+    GITHUB_INSTALLED=true
+}

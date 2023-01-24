@@ -77,24 +77,14 @@ function apt_add_repository_DESC()
 function apt_add_repository_TEST()
 {
     local id="$1"
-    local part="${id##ppa:}"
-    local existing=""
-    
-    if [[ "$part" != "$id" ]]; then
-	# ID must be ppa:user/name
-	local user="${part%%/*}"
-	local name="${part##*/}"
-	existing=$(sed -n -e "\%deb http.*/ppa\..*/$user/$name/.*%p" /etc/apt/sources.list /etc/apt/sources.list.d/*)
-    else
-	# ID must be a literal string
-	existing=$(sed -n -e "\%$id%p" /etc/apt/sources.list /etc/apt/sources.list.d/*)	
-    fi
-    [[ "$existing" != "" ]]
+    local file="$2"
+    test -f /etc/apt/sources.list.d/$file
 }
 
 function apt_add_repository_SHELL()
 {
     local id="$1"
-    sudo add-apt-repository -y "$id"
+    local file="$2"
+    echo "$id" | sudo dd of=/etc/apt/sources.list.d/$file
     sudo apt update
 }
