@@ -7,10 +7,15 @@
 # Configuration
 #
 
-export PISH_BOX="$HOME/Projects"
-export PISH_BOX_URL="git@github.com:harveyt"
+PISH_URL="https://github.com/harveyt/pish.git"
+PISH_ROOT="$HOME/Projects/pish"
 
+PISH_BOX_ROOT="$HOME/Projects"
+PISH_BOX_URL="git@github.com:harveyt"
+
+# ================================================================================
 # Determine script name
+#
 SCRIPT_NAME="$(basename "$0" .sh)"
 SCRIPT_FILE="$(basename "$0")"
 SCRIPT_DIR="$(cd "$(dirname "$0")"; pwd -P)"
@@ -31,7 +36,7 @@ VERBOSE_PREFIX=${VERBOSE_PREFIX:-}
 # ================================================================================
 # Option processing
 #
-short_opts="vqVb:o:t:"
+short_opts="vqVt:"
 
 function usage()
 {
@@ -42,8 +47,6 @@ Provision In SHell. Ensure a machine is provisioned according to some simple bas
 -v, --verbose	Verbose output to stderr (default).
 -q, --quiet	No verbose output to stderr.
 -V, --version	Show version to stderr.
--b, --box	Name of the box configuration.
--o, --os	Operating system type.
 
 -t requirement	Run specified requirements (run defaults if none supplied).
 " >&2
@@ -63,12 +66,6 @@ function process_opt()
 	    ;;
 	V|version)
 	    show_version
-	    ;;
-	b|box)
-	    BOX_CONFIG=$OPTARG
-	    ;;
-	o|os)
-	    OS_CONFIG=$OPTARG
 	    ;;
 	t)
 	    requirement $OPTARG
@@ -376,6 +373,48 @@ function requirement_run_all()
 }
 
 # ================================================================================
+# OS and Box Detection
+
+function detect_os()
+{
+    case $(uname -s) in
+	Darwin)
+	    PISH_OS=macos
+	    ;;
+	Linux)
+	    # Could be Linux or WSL2
+	    case $(uname -r) in
+		*-WSL2)
+		    PISH_OS=linux-wsl2
+		    ;;
+		*)
+		    PISH_OS=linux
+		    ;;
+	    esac
+	    ;;
+	*)
+	    error "unknown OS '$(uname -s)'"
+	    ;;
+    esac
+}
+
+function detect_box()
+{
+    PISH_HOST=$(hostname)
+    case $PISH_HOST in
+	Harveys-MBP)
+	    PISH_BOX=box-spartan-macos
+	    ;;
+	panther)
+	    PISH_BOX=box-panther-win
+	    ;;
+	*)
+	    error "unknown host '$PISH_HOST'"
+	    ;;
+    esac
+}
+
+# ================================================================================
 # Main
 
 function process_main_args()
@@ -405,12 +444,8 @@ function process_main_args()
 
 function main()
 {
-    if [[ $BOX_CONFIG == "" ]]; then
-	error "Must provide --box=name argument for box configuration"
-    fi
-    if [[ $OS_CONFIG == "" ]]; then
-	error "Must provide --os=name argument for os configuration"
-    fi
+    detect_os
+    detect_box
 
     export PISH="$SCRIPT_PATH"
     root="${SCRIPT_DIR%%/bin}"
@@ -418,7 +453,7 @@ function main()
     export PISH_LIB="${root}/lib/pish"
     export CURL="curl -fsSL"
     
-    verb "Running pish box '$BOX_CONFIG' for '$OS_CONFIG'..."
+    verb "Running pish box '$PISH_BOX' for '$PISH_OS'..."
     verb ""    
     verb "    PISH=$PISH"
     verb "    PISH_BIN=$PISH_BIN"
@@ -454,4 +489,3 @@ function main()
 process_main_args "$@"
 main "$@"
 exit 0
-

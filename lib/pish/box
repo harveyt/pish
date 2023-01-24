@@ -3,7 +3,7 @@
 # Box download and load
 #
 
-BOX_CONFIG_FILE=$PISH_BOX/$BOX_CONFIG/pish-config
+BOX_CONFIG_FILE=$PISH_BOX_ROOT/$PISH_BOX/pish-config
 BOX_CONFIG_PULLED=false
 BOX_CONFIG_LOADED=false
 
@@ -16,12 +16,12 @@ function box_pull_PREQ()
 {
     requirement ssh_has_keys
     requirement ssh_known_hosts github.com
-    requirement git_clone "$PISH_BOX_URL/$BOX_CONFIG" "$PISH_BOX/$BOX_CONFIG"
+    requirement git_clone "$PISH_BOX_URL/$PISH_BOX" "$PISH_BOX_ROOT/$PISH_BOX"
 }
 
 function box_pull_DESC()
 {
-    echo "box '$BOX_CONFIG' is up to date"
+    echo "box '$PISH_BOX' is up to date"
 }
 
 function box_pull_TEST()
@@ -33,7 +33,7 @@ function box_pull_TEST()
 
 function box_pull_SHELL()
 {
-    cd $PISH_BOX/$BOX_CONFIG
+    cd $PISH_BOX_ROOT/$PISH_BOX
     git pull
 }
 
@@ -73,7 +73,7 @@ function box_load_PREQ()
 
 function box_load_DESC()
 {
-    echo "box '$BOX_CONFIG' is loaded"
+    echo "box '$PISH_BOX' is loaded"
 }
 
 function box_load_TEST()
@@ -84,7 +84,7 @@ function box_load_TEST()
 function box_load_LOCAL()
 {
     if [[ ! -f $BOX_CONFIG_FILE ]]; then
-	error "'$BOX_CONFIG' must have '$BOX_CONFIG_FILE'"
+	error "'$PISH_BOX' must have '$BOX_CONFIG_FILE'"
     fi
 
     # Load it

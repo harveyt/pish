@@ -31,10 +31,10 @@ function ssh_has_keys_LOCAL()
 	mkdir -p $SSH_DIR
     fi
     if [[ ! -f $SSH_ID_RSA ]]; then
-	$OP document get "$BOX_CONFIG - id_rsa" --output=$SSH_ID_RSA
+	$OP document get "$PISH_BOX - id_rsa" --output=$SSH_ID_RSA
     fi
     if [[ ! -f $SSH_ID_RSA_PUB ]]; then
-	$OP document get "$BOX_CONFIG - id_rsa.pub" --output=$SSH_ID_RSA_PUB
+	$OP document get "$PISH_BOX - id_rsa.pub" --output=$SSH_ID_RSA_PUB
     fi
 }
 
