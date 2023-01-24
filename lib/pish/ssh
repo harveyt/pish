@@ -1,0 +1,35 @@
+#!/bin/bash
+#
+# GitHub / BitBucket / SSH Access
+#
+
+SSH_ID_RSA=$HOME/.ssh/id_rsa
+SSH_ID_RSA_PUB=$HOME/.ssh/id_rsa.pub
+
+# ================================================================================
+# Get SSH configuration
+
+function ssh_has_keys_PREQ()
+{
+    requirement 1pass_logged_in
+}
+
+function ssh_has_keys_DESC()
+{
+    echo "has SSH keys from 1Password"
+}
+    
+function ssh_has_keys_TEST()
+{
+    test -f $SSH_ID_RSA -a $SSH_ID_RSA_PUB
+}
+
+function ssh_has_keys_LOCAL()
+{
+    if [[ ! -f $SSH_ID_RSA ]]; then
+	$OP document get "$BOX_CONFIG - id_rsa" --output=$SSH_ID_RSA
+    fi
+    if [[ ! -f $SSH_ID_RSA_PUB ]]; then
+	$OP document get "$BOX_CONFIG - id_rsa.pub" --output=$SSH_ID_RSA_PUB
+    fi
+}

@@ -441,6 +441,7 @@ function main()
 
     # Ensure 1Password is present and logged in, everything depends on this.
     requirement 1pass_logged_in
+    requirement ssh_has_keys
     
     # BOX_CONFIG_LOADED=false    
     # requirement box_load

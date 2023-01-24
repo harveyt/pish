@@ -133,6 +133,12 @@ function 1pass_logged_in_DESC()
 
 function 1pass_logged_in_TEST()
 {
+    # TODO: If there is no account, then ask up front for all the info?
+    # TODO: - sign-in url: "my"
+    # TODO: - email: "...@..."
+    # TODO: - secret key: xy-123456-123456-12345-12345-12345-12345
+    # TODO: Hard to validate though.
+    
     local uuid=$(op whoami 2>/dev/null | awk '$1 == "User" { print $3 }')
     local session=""
     if [[ "$uuid" != "" ]]; then

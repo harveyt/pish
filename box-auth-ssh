@@ -1,0 +1,57 @@
+#!/bin/bash
+
+usage()
+{
+    echo "usage: box-auth-ssh box-name-os work|home
+
+work - means that password will be required for SSH
+home - means that password will not be required for SSH
+" >&2
+    exit 1
+}
+
+copy_from()
+{
+    local uuid=$1
+    local title=$2
+    local file=$3
+
+    local exists=$(op document list | grep "$title")
+    if [[ "$exists" != "" ]]; then
+	return
+    fi
+    echo "Creating '$title'"
+    op document get "$uuid" | op document create - --title "$title" --file-name "$file"
+}
+
+# ================================================================================
+# Main
+if [[ $# -ne 2 ]]; then
+    usage
+fi
+
+box=$1
+type=$2
+
+UUID_ID_RSA_PWD=o2u3oclklvdefhgufrt6hldloq
+UUID_ID_RSA_PUB_PWD=xw2i2ij46vh6liozh4so3lisoq
+
+UUID_ID_RSA=toxbcaonq5ei3ggzh2w24ovf3e
+UUID_ID_RSA_PUB=pocoscvgmvbw5ibjbiaaprrlgm
+
+case $type in
+    work)
+	ID_RSA=$UUID_ID_RSA_PWD
+	ID_RSA_PUB=$UUID_ID_RSA_PUB_PWD
+	;;
+    home)
+	ID_RSA=$UUID_ID_RSA
+	ID_RSA_PUB=$UUID_ID_RSA_PUB
+	;;
+    *)
+	usage
+	;;
+esac
+
+copy_from "$ID_RSA" "$box - id_rsa" "id_rsa"
+copy_from "$ID_RSA_PUB" "$box - id_rsa.pub" "id_rsa.pub"
