@@ -439,8 +439,8 @@ function main()
     verb "Running box..."
     verb ""
 
-    # Download and load box as required
-    requirement 1pass_op_install
+    # Ensure 1Password is present and logged in, everything depends on this.
+    requirement 1pass_logged_in
     
     # BOX_CONFIG_LOADED=false    
     # requirement box_load

@@ -15,6 +15,8 @@ OP_DEBSIG_POLICY="/etc/debsig/policies/AC2D62742012EA22/1password.pol"
 OP_DEBSIG_KEYRING_URL="https://downloads.1password.com/linux/keys/1password.asc"
 OP_DEBSIG_KEYRING="/usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg"
 
+OP=op
+
 # ================================================================================
 # Add 1Password keyring
 
@@ -107,7 +109,7 @@ function 1pass_op_install_DESC()
     
 function 1pass_op_install_TEST()
 {
-    type -p op >/dev/null
+    type -p $OP >/dev/null
 }
 
 function 1pass_op_install_SHELL()
@@ -115,36 +117,37 @@ function 1pass_op_install_SHELL()
     sudo apt update && sudo apt install -y 1password-cli
 }
 
-# # ================================================================================
-# # 1Password Configuration
-# #
-# _1PASS=${_1PASS:-1pass}
-# _1PASS_OP=${_1PASS_OP:-op}
-# _1PASS_JQ=${_1PASS_JQ:-jq}
-# 
-# # ================================================================================
-# # 1Password Requirements
-# #
-# # This will only pass if user is logged in.
-# #
-# 
-# function 1pass_logged_in_PREQ()
-# {
-#     requirement can_execute "$_1PASS"
-#     requirement can_execute "$_1PASS_OP"
-#     requirement can_execute "$_1PASS_JQ"
-# }
-# 
-# function 1pass_logged_in_DESC()
-# {
-#     echo "logged into 1Password"
-# }
-# 
-# function 1pass_logged_in_TEST()
-# {
-#     "$_1PASS" --login-valid
-# }
-# 
+# ================================================================================
+# Ensure logged into 1Password
+#
+
+function 1pass_logged_in_PREQ()
+{
+    requirement 1pass_op_install
+}
+
+function 1pass_logged_in_DESC()
+{
+    echo "check logged into 1Password"
+}
+
+function 1pass_logged_in_TEST()
+{
+    local uuid=$(op whoami 2>/dev/null | awk '$1 == "User" { print $3 }')
+    local session=""
+    if [[ "$uuid" != "" ]]; then
+	eval session=\$OP_SESSION_$uuid
+    fi
+    if [[ "$session" != "" ]]; then
+	true
+	return
+    fi
+
+    verb_end ""
+    eval $(op signin)
+    verb_begin "[1pass_logged_in] Test has logged into 1Password ... "
+}
+ 
 # # --------------------------------------------------------------------------------
 # # This will login user if required
 # #
