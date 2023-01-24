@@ -7,6 +7,8 @@ BOX_CONFIG_FILE=$PISH_BOX/$BOX_CONFIG/pish-config
 BOX_CONFIG_PULLED=false
 BOX_CONFIG_LOADED=false
 
+BOX_USER_CONFIG_URL=git@github.com:harveyt/config.git
+
 # ================================================================================
 # Box download
 #
@@ -79,4 +81,70 @@ function box_load_LOCAL()
     # Load it
     . $BOX_CONFIG_FILE
     BOX_CONFIG_LOADED=true
+}
+
+# ================================================================================
+# Box user config
+
+function box_user_config_PREQ()
+{
+    requirement ssh_has_keys
+}
+
+function box_user_config_DESC()
+{
+    echo "box user config is present"
+}
+
+function box_user_config_TEST()
+{
+    test -d $HOME/bin
+}
+
+function box_user_config_install_config()
+{
+    if [[ ! -d $HOME/config ]]; then
+	return
+    fi
+    for src in $HOME/config/.[^.]* $HOME/config/*
+    do
+	dst="$HOME/$(basename "$src")"
+
+	if [[ -e "$dst" ]]; then
+	    dst_orig="$dst-ORIG"
+	    echo "WARNING: $dst saved as $dst_orig"
+	    mv "$dst" "$dst-ORIG"
+	fi
+	mv "$src" "$dst"
+    done
+    rmdir $HOME/config
+}
+
+function box_user_config_install_ssh()
+{
+    if [[ ! -d $HOME/.ssh ]]; then
+	return
+    fi
+    for src in $HOME/.ssh/*
+    do
+	dst="$HOME/lib/ssh/$(basename "$src")"
+	if [[ -e "$dst" ]]; then
+	    dst_orig="$dst-ORIG"
+	    echo "WARNING: $dst saved as $dst_orig"
+	    mv "$dst" "$dst-ORIG"
+	fi
+	mv "$src" "$dst"
+    done
+    rmdir $HOME/.ssh
+    ln -s $HOME/lib/ssh $HOME/.ssh
+}
+
+function box_user_config_SHELL()
+{
+    cd $HOME
+    mkdir -p $HOME/config
+    git clone $BOX_USER_CONFIG_URL $HOME/config
+
+    box_user_config_install_config
+    box_user_config_install_ssh
 }
