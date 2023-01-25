@@ -1,0 +1,29 @@
+#!/bin/bash
+#
+# Emacs support
+#
+
+# ================================================================================
+# Emacs Git Forge
+
+function emacs_forge_auth_PREQ()
+{
+    requirement 1pass_logged_in
+}
+
+function emacs_forge_auth_DESC()
+{
+    echo "emacs forge has authorization"
+}
+    
+function emacs_forge_auth_TEST()
+{
+    test -f $EMACS_FORGE_FILE
+}
+
+function emacs_forge_auth_LOCAL()
+{
+    local token=$(op item get "$EMACS_FORGE_OP_KEY" --fields label=credential)
+    local keyid=
+    echo "$EMACS_FORGE_CONTENT $token" | gpg --encrypt --recipient $GPG_OP_KEYID -o $EMACS_FORGE_FILE
+}

@@ -57,6 +57,10 @@ function pish_configure()
     EMACS_REPO_FILE=kelleyk-ubuntu-emacs-$APT_CODENAME.list
     EMACS_REPO_ID="deb https://ppa.launchpadcontent.net/kelleyk/emacs/ubuntu/ $APT_CODENAME main"
 
+    EMACS_FORGE_FILE=$HOME/.authinfo.gpg
+    EMACS_FORGE_OP_KEY="Emacs Forge - GitHub"
+    EMACS_FORGE_CONTENT="machine api.github.com login harveyt^forge password"
+
     # LLVM
     LLVM_KEY="/etc/apt/trusted.gpg.d/llvm-snapshot.gpg"
     LLVM_KEY_URL="https://apt.llvm.org/llvm-snapshot.gpg.key"
