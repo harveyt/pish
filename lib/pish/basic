@@ -53,6 +53,32 @@ function make_directory_SHELL()
 }
 
 # --------------------------------------------------------------------------------
+function make_symlink_DESC()
+{
+    local src="$1"
+    local dst="$2"
+    echo "symlink \"$dst\" is linked to \"$src\""
+}
+
+function make_symlink_TEST()
+{
+    local src="$1"
+    local dst="$2"
+    if [[ ! -L "$dst" ]]; then
+	false
+    else
+	[[ $(readlink "$dst") == "$src" ]]
+    fi
+}
+
+function make_symlink_SHELL()
+{
+    local src="$1"
+    local dst="$2"
+    ln -s "$src" "$dst"
+}
+
+# --------------------------------------------------------------------------------
 function copy_file_DESC()
 {
     echo "copy \"$1\" to \"$2\""
