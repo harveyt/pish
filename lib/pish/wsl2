@@ -1,0 +1,37 @@
+#!/bin/bash
+#
+# WSL2
+#
+
+wsl2_conf_DESC()
+{
+    echo "WSL2 is configured"
+}
+
+wsl2_conf_TEST()
+{
+    if [[ $PISH_OS != "linux-wsl2" ]]; then
+	true
+    else
+	test -f /etc/wsl.conf
+    fi
+}
+
+wsl2_conf_SHELL()
+{
+    echo '[automount]
+enabled = true
+options = "metadata,uid=1000,gid=1000,umask=0022,fmask=11"
+mountFsTab = false
+
+[network]
+generateHosts = true
+generateResolvConf = true
+
+[interop]
+enabled = true
+appendWindowsPath = true' | sudo dd of=/etc/wsl.conf
+    sudo umount /mnt/c
+    sudo mount -t drvfs -o metadata,uid=1000,gid=1000,umask=0022,fmask=11 'C:\' /mnt/c
+}
+
