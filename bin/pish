@@ -89,6 +89,24 @@ function pish_configure()
     GITHUB_KEY_URL="https://cli.github.com/packages/githubcli-archive-keyring.gpg"
     GITHUB_REPO_FILE="github-cli.list"
     GITHUB_REPO_ID="deb [arch=$APT_ARCH signed-by=$GITHUB_KEY] https://cli.github.com/packages stable main"
+    # lib/pish/choco
+    case "$PISH_OS" in
+	linux-wsl2)
+	    POWERSHELL=powershell.exe
+    
+	    TEMP_WIN="$($POWERSHELL -Command '$ENV:TEMP' | tr -d '\r')"
+	    TEMP_WIN_WSL=$(wslpath -u "$TEMP_WIN")
+
+	    CHOCO_INSTALL_URL="https://community.chocolatey.org/install.ps1"
+	    CHOCO_INSTALL_FILE_WIN="$TEMP_WIN/chocolatey-install.ps1"	    
+	    CHOCO_INSTALL_FILE="$TEMP_WIN_WSL/chocolatey-install.ps1"
+	    CHOCO=/mnt/c/ProgramData/chocolatey/bin/choco.exe
+
+	    # GSUDO for UAC cache sudo like system
+	    GSUDO=/mnt/c/tools/gsudo/Current/gsudo.exe
+	    ;;
+	*)
+    esac
 }
 
 # ================================================================================

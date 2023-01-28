@@ -1,0 +1,70 @@
+#!/bin/bash
+#
+# Chocolatey support for WSL2
+#
+
+# ================================================================================
+# Download chocolately install script
+#
+function chocolatey_download_DESC()
+{
+    echo "download chocolatey install script - UAC may popup!"
+}
+
+function chocolatey_download_TEST()
+{
+    test -f $CHOCO_INSTALL_FILE
+}
+
+function chocolatey_download_SHELL()
+{
+    $CURL $CHOCO_INSTALL_URL -o $CHOCO_INSTALL_FILE
+}
+
+# ================================================================================
+# Install chocolatey
+#
+function chocolatey_install_PREQ()
+{
+    # requirement sudo_cache_root_password
+    requirement chocolatey_download
+}
+
+function chocolatey_install_DESC()
+{
+    echo "install chocolatey"
+}
+3
+function chocolatey_install_TEST()
+{
+    test -x $CHOCO
+}
+
+function chocolatey_install_SHELL()
+{
+    # Note that installs both chocolately and install gsudo.
+    # Shame cannot start the gsudo cache, so that will require another UAC pop-up.
+    $POWERSHELL -Command "Start-Process powershell -Verb runAs -Wait -ArgumentList \" -NoProfile -ExecutionPolicy ByPass -Command \"\"& $CHOCO_INSTALL_FILE_WIN; choco install gsudo -y\"\" \""
+}
+
+# ================================================================================
+# Cache for Windows gsudo purposes
+#
+
+function windows_gsudo_cache_DESC()
+{
+    echo "ensure Windows gsudo cache is on - UAC may popup!"
+}
+
+function windows_gsudo_cache_TEST()
+{
+    local avail=$($GSUDO status | awk '$0 ~ /Available for this process:/ { print $5; }' | tr -d '\r')
+    [[ "$avail" == "True" ]]
+}
+
+function windows_gsudo_cache_SHELL()
+{
+    # Note that installs both chocolately and install gsudo.
+    # Shame cannot start the gsudo cache, so that will require another UAC pop-up.
+    $GSUDO cache on
+}
