@@ -34,7 +34,7 @@ function chocolatey_install_DESC()
 {
     echo "install chocolatey"
 }
-3
+
 function chocolatey_install_TEST()
 {
     test -x $CHOCO

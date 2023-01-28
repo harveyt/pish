@@ -23,6 +23,7 @@ function git_clone_SHELL()
 {
     local url="$1"
     local dir="$2"
+
     git clone --origin=$GIT_ORIGIN "$url" "$dir"
 }
 
@@ -51,4 +52,68 @@ function git_clone_project_SHELL()
     local path="$GIT_PROJECTS_ROOT/$dir"
 
     git clone --origin=$GIT_ORIGIN "$url" "$path"
+}
+
+# ================================================================================
+# Ensure remote exists with right url
+
+function git_remote_DESC()
+{
+    local dir="$1"
+    local name="$2"
+    local url="$3"
+    echo "remote '$name' exists for '$dir'"
+}
+
+function git_remote_TEST()
+{
+    local dir="$1"
+    local name="$2"
+    local url="$3"
+
+    local actual=$(cd "$dir"; git config "remote.$name.url")
+    [[ "$actual" == "$url" ]]
+}
+
+function git_remote_SHELL()
+{
+    local dir="$1"
+    local name="$2"
+    local url="$3"
+
+    cd "$dir"    
+    local actual=$(git config "remote.$name.url")
+    if [[ "$actual" == "" ]]; then
+	git remote add "$name" "$url"
+    else
+	git remote set-url "$name" "$url"
+    fi
+}
+
+# ================================================================================
+# Ensure remote does not exist
+
+function git_remote_removed_DESC()
+{
+    local dir="$1"
+    local name="$2"
+    echo "remote '$name' does not exist for '$dir'"
+}
+
+function git_remote_removed_TEST()
+{
+    local dir="$1"
+    local name="$2"
+
+    local status=$(cd "$dir"; git config "remote.$name.url" >/dev/null 2>&1; echo $?)
+    [[ $status -eq 1 ]]
+}
+
+function git_remote_removed_SHELL()
+{
+    local dir="$1"
+    local name="$2"
+
+    cd "$dir"
+    git remote remove "$name"
 }

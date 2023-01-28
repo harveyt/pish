@@ -48,3 +48,51 @@ function github_install_LOCAL()
 {
     GITHUB_INSTALLED=true
 }
+
+# ================================================================================
+# GitHub logged in / auth
+
+function github_logged_in_DESC()
+{
+    echo "GitHub is logged in"
+}
+
+function github_logged_in_TEST()
+{
+    gh auth status >/dev/null 2>&1
+}
+
+function github_logged_in_LOCAL()
+{
+    # TODO: Assumes local config added
+    eval $(1pass-forge --login github)
+}
+
+# ================================================================================
+# GitHub Clone
+
+function github_clone_PREQ()
+{
+    requirement github_install
+    requirement github_logged_in
+}
+
+function github_clone_DESC()
+{
+    local repo="$1"
+    local dir="$2"
+    echo "GitHub '$repo' is cloned"
+}
+
+function github_clone_TEST()
+{
+    local dir="$2"    
+    test -d "$dir"
+}
+
+function github_clone_LOCAL()
+{
+    local repo="$1"
+    local dir="$2"
+    gh repo clone "$repo" "$dir"
+}
