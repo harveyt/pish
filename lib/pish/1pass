@@ -64,11 +64,20 @@ function 1pass_add_debsig_keyring_SHELL()
 
 function 1pass_op_install_PREQ()
 {
-    requirement apt_add_keyring "$OP_KEYRING_URL" "$OP_KEYRING"
+    case $PISH_OS in
+	linux-wsl2)
+	    requirement apt_add_keyring "$OP_KEYRING_URL" "$OP_KEYRING"
     
-    requirement 1pass_add_repository
-    requirement 1pass_add_debsig_policy
-    requirement 1pass_add_debsig_keyring
+	    requirement 1pass_add_repository
+	    requirement 1pass_add_debsig_policy
+	    requirement 1pass_add_debsig_keyring
+	    ;;
+	macos)
+	    ;;
+	*)
+	    error "Unknown os for 1pass op install"
+	    ;;
+    esac
 }
 
 function 1pass_op_install_DESC()
@@ -83,9 +92,18 @@ function 1pass_op_install_TEST()
 
 function 1pass_op_install_SHELL()
 {
-    # Adding a new source needs to force an apt update.
-    sudo apt update
-    sudo apt install -y 1password-cli
+    case $PISH_OS in
+	linux-wsl2)
+	    # Adding a new source needs to force an apt update.
+	    sudo apt update
+	    sudo apt install -y 1password-cli
+	    ;;
+	macos)
+	    brew install 1password-cli
+	    ;;
+	*)
+	    ;;
+    esac
 }
 
 # ================================================================================

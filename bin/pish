@@ -427,7 +427,6 @@ function converge_process_arguments()
 # Requirement handling
 #
 declare -a REQUIREMENTS
-declare -A REQUIREMENTS_MAP
 
 function requirement()
 {
@@ -438,18 +437,19 @@ function requirement()
 
     converge_prerequisites "$@"
     
-    local args="$(quote_args "$@")"
+    local args=$(quote_args "$@")
     REQUIREMENTS+=("$args")
-    REQUIREMENTS_MAP["$args"]=true
 }
 
 function requirement_exists()
 {
-    local args="$(quote_args "$@")"
-    local value=${REQUIREMENTS_MAP["$args"]}
-    if [[ "$value" != "" ]]; then
-	return 0
-    fi
+    local args=$(quote_args "$@")
+    for req in ${REQUIREMENTS[@]}
+    do
+	if [[ "$req" = "$args" ]]; then
+	    return 0
+	fi
+    done
     return 1
 }
     
@@ -606,6 +606,16 @@ function pish_main()
 	    ;;
 	macos)
 	    requirement homebrew_install
+
+	    # Emacs
+	    requirement brew_install cmake	    
+	    # brew tap d12frosted/emacs-plus
+	    # brew install emacs-plus@28
+
+	    requirement 1pass_logged_in
+	    requirement box_pull
+	    requirement box_user_config
+	    requirement box_fix_pish_remote
 	    ;;
 	*)
 	    ;;
