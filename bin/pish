@@ -594,33 +594,28 @@ function pish_main()
     verb "Running box..."
     verb ""
 
+    # Ensure 1Password is present and logged in, everything depends on this.
+    # TODO: Fix to work everywhere
+    # TODO: Change PISH_OS to just win on windows (not linux-wsl2)
+    # TODO: Add binary to lib/pish/exec/op.$PISH_OS
+    # TODO: Move config into git os-$PISH_OS except common stuff
+    # TODO: Add checksum to ensure sane before running?
     case "$PISH_OS" in
 	linux-wsl2)
-	    # Ensure 1Password is present and logged in, everything depends on this.
-	    # TODO: Fix to work everywhere
-	    requirement 1pass_logged_in
-
-	    requirement pish_install
-	    requirement box_load
-
 	    ;;
 	macos)
 	    requirement homebrew_install
-
-	    # Emacs
-	    requirement brew_install cmake	    
-	    # brew tap d12frosted/emacs-plus
-	    # brew install emacs-plus@28
-
-	    requirement 1pass_logged_in
-	    requirement box_pull
-	    requirement box_user_config
-	    requirement box_fix_pish_remote
 	    ;;
 	*)
 	    ;;
     esac
+    requirement 1pass_logged_in
+    
+    # Common
+    requirement pish_install
+    requirement box_load
 
+    
     # Run all requirements (the box will typically add more than the above)
     requirement_run_all
 }

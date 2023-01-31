@@ -44,8 +44,14 @@ function brew_install_DESC()
 
 function brew_install_TEST()
 {
-    local name="$1"    
-    brew ls --versions "$name" >/dev/null
+    local name="$1"
+    if [[ -d /usr/local/Cellar/$name ]]; then
+	true
+    elif [[ -d /usr/local/Caskroom/$name ]]; then
+	true
+    else
+	false
+    fi
 }
 
 function brew_install_SHELL()
