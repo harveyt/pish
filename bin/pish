@@ -594,23 +594,25 @@ function pish_main()
     verb "Running box..."
     verb ""
 
-    # Ensure 1Password is present and logged in, everything depends on this.
-    # TODO: Fix to work everywhere
     case "$PISH_OS" in
 	linux-wsl2)
+	    # Ensure 1Password is present and logged in, everything depends on this.
+	    # TODO: Fix to work everywhere
 	    requirement 1pass_logged_in
 
 	    requirement pish_install
 	    requirement box_load
 
-	    # Run all requirements (the box will typically add more than the above)
-	    requirement_run_all
 	    ;;
 	macos)
+	    requirement homebrew_install
 	    ;;
 	*)
 	    ;;
     esac
+
+    # Run all requirements (the box will typically add more than the above)
+    requirement_run_all
 }
 
 # ================================================================================
