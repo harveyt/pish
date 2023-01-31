@@ -599,15 +599,18 @@ function pish_main()
     case "$PISH_OS" in
 	linux-wsl2)
 	    requirement 1pass_logged_in
+
+	    requirement pish_install
+	    requirement box_load
+
+	    # Run all requirements (the box will typically add more than the above)
+	    requirement_run_all
+	    ;;
+	macos)
 	    ;;
 	*)
 	    ;;
     esac
-    requirement pish_install
-    requirement box_load
-
-    # Run all requirements (the box will typically add more than the above)
-    requirement_run_all
 }
 
 # ================================================================================
