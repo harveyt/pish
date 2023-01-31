@@ -41,18 +41,18 @@ function box_pull_SHELL()
 
 function box_fix_pish_remote_DESC()
 {
-    echo 'pish has SSH git remote'
+    echo 'pish project has SSH git remote'
 }
 
 function box_fix_pish_remote_TEST()
 {
-    local remote="$(cd $PISH_ROOT; git remote show -n $GIT_ORIGIN | awk '$1 == "Fetch" && $2 == "URL:" { print $3 }')"
+    local remote="$(cd $PISH_PROJECT_ROOT; git remote show -n $GIT_ORIGIN | awk '$1 == "Fetch" && $2 == "URL:" { print $3 }')"
     [[ "$remote" == "$PISH_URL" ]]
 }
 
 function box_fix_pish_remote_SHELL()
 {
-    cd $PISH_ROOT
+    cd $PISH_PROJECT_ROOT
     git remote set-url $GIT_ORIGIN $PISH_URL
 }
 
