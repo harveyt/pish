@@ -11,6 +11,9 @@ function pish_configure()
 {
     # Pish
     PISH_URL="git@github.com:harveyt/pish.git"
+    PISH_PROJECT_ROOT="$HOME/Projects/pish"
+    
+    PISH_INSTALL_ROOT=/usr/local
 
     PISH_BOX_ROOT="$HOME/Projects"
     PISH_BOX_URL="git@github.com:harveyt"
@@ -512,6 +515,25 @@ function pish_detect_box()
 }
 
 # ================================================================================
+# Install
+
+function pish_install_DESC()
+{
+    echo "pish is installed to '$PISH_INSTALL_ROOT'"
+}
+
+function pish_install_TEST()
+{
+    [[ -x $PISH_INSTALL_ROOT/bin/pish ]]
+}
+
+function pish_install_SHELL()
+{
+    sudo ln -s $PISH_PROJECT_ROOT/bin/pish $PISH_INSTALL_ROOT/bin/pish
+    sudo ln -s $PISH_PROJECT_ROOT/lib/pish $PISH_INSTALL_ROOT/lib/pish
+}
+
+# ================================================================================
 # Main
 
 function pish_process_main_args()
@@ -574,6 +596,7 @@ function pish_main()
 
     # Ensure 1Password is present and logged in, everything depends on this.
     requirement 1pass_logged_in
+    requirement pish_install
     requirement box_load
 
     # Run all requirements (the box will typically add more than the above)
