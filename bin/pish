@@ -595,7 +595,14 @@ function pish_main()
     verb ""
 
     # Ensure 1Password is present and logged in, everything depends on this.
-    requirement 1pass_logged_in
+    # TODO: Fix to work everywhere
+    case "$PISH_OS" in
+	linux-wsl2)
+	    requirement 1pass_logged_in
+	    ;;
+	*)
+	    ;;
+    esac
     requirement pish_install
     requirement box_load
 
