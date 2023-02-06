@@ -508,6 +508,9 @@ function pish_detect_box()
 	panther)
 	    PISH_BOX=box-panther-win
 	    ;;
+        *-HTHOMP-W11)
+	    PISH_BOX=box-work-win
+	    ;;
 	*)
 	    error "unknown host '$PISH_HOST'"
 	    ;;
