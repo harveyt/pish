@@ -502,7 +502,7 @@ function pish_detect_box()
 {
     PISH_HOST=$(hostname)
     case $PISH_HOST in
-	spartan|Harveys-MBP|MacBook-Pro)
+	spartan|Harveys-MBP|MacBook-Pro|MacBook-Pro.local)
 	    PISH_BOX=box-spartan-macos
 	    ;;
 	panther)
