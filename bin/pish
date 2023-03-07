@@ -427,7 +427,6 @@ function converge_process_arguments()
 # Requirement handling
 #
 declare -a REQUIREMENTS
-declare -A REQUIREMENTS_MAP
 
 function requirement()
 {
@@ -438,18 +437,19 @@ function requirement()
 
     converge_prerequisites "$@"
     
-    local args="$(quote_args "$@")"
+    local args=$(quote_args "$@")
     REQUIREMENTS+=("$args")
-    REQUIREMENTS_MAP["$args"]=true
 }
 
 function requirement_exists()
 {
-    local args="$(quote_args "$@")"
-    local value=${REQUIREMENTS_MAP["$args"]}
-    if [[ "$value" != "" ]]; then
-	return 0
-    fi
+    local args=$(quote_args "$@")
+    for req in ${REQUIREMENTS[@]}
+    do
+	if [[ "$req" = "$args" ]]; then
+	    return 0
+	fi
+    done
     return 1
 }
     
@@ -502,11 +502,14 @@ function pish_detect_box()
 {
     PISH_HOST=$(hostname)
     case $PISH_HOST in
-	spartan|Harveys-MBP|MacBook-Pro)
+	spartan|Harveys-MBP|MacBook-Pro|MacBook-Pro.local)
 	    PISH_BOX=box-spartan-macos
 	    ;;
 	panther)
 	    PISH_BOX=box-panther-win
+	    ;;
+        *-HTHOMP-W11)
+	    PISH_BOX=box-work-win
 	    ;;
 	*)
 	    error "unknown host '$PISH_HOST'"
@@ -594,15 +597,14 @@ function pish_main()
     verb "Running box..."
     verb ""
 
+    # Ensure 1Password is present and logged in, everything depends on this.
+    # TODO: Fix to work everywhere
+    # TODO: Change PISH_OS to just win on windows (not linux-wsl2)
+    # TODO: Add binary to lib/pish/exec/op.$PISH_OS
+    # TODO: Move config into git os-$PISH_OS except common stuff
+    # TODO: Add checksum to ensure sane before running?
     case "$PISH_OS" in
 	linux-wsl2)
-	    # Ensure 1Password is present and logged in, everything depends on this.
-	    # TODO: Fix to work everywhere
-	    requirement 1pass_logged_in
-
-	    requirement pish_install
-	    requirement box_load
-
 	    ;;
 	macos)
 	    requirement homebrew_install
@@ -610,7 +612,13 @@ function pish_main()
 	*)
 	    ;;
     esac
+    requirement 1pass_logged_in
+    
+    # Common
+    requirement pish_install
+    requirement box_load
 
+    
     # Run all requirements (the box will typically add more than the above)
     requirement_run_all
 }
