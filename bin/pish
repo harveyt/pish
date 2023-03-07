@@ -83,7 +83,7 @@ function pish_configure()
     GPG_MAJOR=2
     GPG_MINOR=2
 
-    GPG_OP_DATE=2022-02-02
+    GPG_OP_DATE=2023-03-07
     GPG_OP_KEYID=B7DCFE052E3EA081
     GPG_OP_PREFIX="GPG Backup - "
 

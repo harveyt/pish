@@ -44,38 +44,7 @@ function gpg_home_conf_SHELL()
 }
 
 # ================================================================================
-# Ensure GPG Home downloads key from 1Password
-
-function gpg_op_download_DESC()
-{
-    local suffix="$1"
-    echo "ensure gpg key '$suffix' is downloaded from 1Password"
-}
-
-function gpg_op_download_TEST()
-{
-    local suffix="$1"
-    local file="gpg-${GPG_OP_DATE}-${GPG_OP_KEYID}-$suffix"
-    test -f "$GPG_HOME/$file"
-}
-
-function gpg_op_download_SHELL()
-{
-    local suffix="$1"
-    local file="gpg-${GPG_OP_DATE}-${GPG_OP_KEYID}-$suffix"
-    local doc="${GPG_OP_PREFIX}${file}"
-
-    op document get "$doc" --output "$GPG_HOME/$file"
-}
-
-# ================================================================================
 # Install a public key from encrypted file
-
-function gpg_op_install_PREQ()
-{
-    local suffix="$1"
-    requirement gpg_op_download "$suffix"
-}
 
 function gpg_op_install_DESC()
 {
@@ -103,9 +72,12 @@ function gpg_op_install_LOCAL()
 {
     local suffix="$1"
     local file="gpg-${GPG_OP_DATE}-${GPG_OP_KEYID}-$suffix"
-    
+    local doc="${GPG_OP_PREFIX}${file}"
+
+    op document get "$doc" --output "$GPG_HOME/$file"
     1pass_get_master_password | gpg --batch --pinentry-mode loopback --passphrase-fd 0 \
-			 --import "$GPG_HOME/$file"
+				    --import "$GPG_HOME/$file"
+    rm -f "$GPG_HOME/$file"
 }
 
 # ================================================================================
