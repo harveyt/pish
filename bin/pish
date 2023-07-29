@@ -57,8 +57,18 @@ function pish_configure()
     APT_CODENAME=$(lsb_release -a 2>/dev/null | awk '$1 == "Codename:" { print $2 }')
 
     # Emacs
-    EMACS_REPO_FILE=kelleyk-ubuntu-emacs-$APT_CODENAME.list
-    EMACS_REPO_ID="deb https://ppa.launchpadcontent.net/kelleyk/emacs/ubuntu/ $APT_CODENAME main"
+    # Emacs28 nativecomp
+    # EMACS_REPO_FILE=kelleyk-ubuntu-emacs-$APT_CODENAME.list
+    # EMACS_REPO_ID="deb https://ppa.launchpadcontent.net/kelleyk/emacs/ubuntu/ $APT_CODENAME main"
+    # EMACS_APT_ID=emacs28-nativecomp
+    # EMACS_ADD_REPO=apt_add_repository
+    
+    # https://launchpad.net/~ubuntu-elisp/+archive/ubuntu/ppa
+    # Emacs29 PGTK with nativecomp
+    EMACS_REPO_FILE=ubuntu-elisp-ubuntu-ppa-$APT_CODENAME.list
+    EMACS_REPO_ID=ppa:ubuntu-elisp/ppa
+    EMACS_APT_ID=emacs-snapshot
+    EMACS_ADD_REPO=apt_add_repository_id
 
     EMACS_FORGE_FILE=$HOME/.authinfo.gpg
     EMACS_FORGE_OP_KEY="Emacs Forge - GitHub"

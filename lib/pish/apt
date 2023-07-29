@@ -88,3 +88,24 @@ function apt_add_repository_SHELL()
     echo "$id" | sudo dd of=$APT_SOURCES_DIR/$file
     sudo apt update
 }
+
+# ================================================================================
+# Add repository using id which results in file id
+
+function apt_add_repository_id_DESC()
+{
+    echo "apt add repository $1"
+}
+    
+function apt_add_repository_id_TEST()
+{
+    local id="$1"
+    local file="$2"
+    test -f $APT_SOURCES_DIR/$file
+}
+
+function apt_add_repository_id_SHELL()
+{
+    local id="$1"
+    sudo add-apt-repository "$1"
+}
